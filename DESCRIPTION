@@ -4,8 +4,7 @@ Title: Analysis of Partially Ordered Data
 Version: 1.0.0
 Author: Lu Mao
 Maintainer: Lu Mao <lmao@biostat.wisc.edu>
-Description: More about what it does (maybe more than one line) Use four
-    spaces when indenting paragraphs within the Description.
+Description: Win ratio 
 License: GPL (>= 2)
 URL: https://sites.google.com/view/lmaowisc/
 Depends: 
