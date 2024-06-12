@@ -6,7 +6,7 @@
 \alias{poset-package}
 \title{poset: Analysis of Partially Ordered Data}
 \description{
-More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
+Win ratio approach to partially ordered data, such as multivariate ordinal responses under product (consensus) or prioritized order. Two-sample tests and multiplicative regression models are implemented (Mao, 2024).
 }
 \seealso{
 Useful links:

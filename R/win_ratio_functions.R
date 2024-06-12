@@ -174,6 +174,7 @@ wprod <- function(y1, y2) {
 # The following function extracts
 # f_ij from mat
 ########################################
+
 antifun_ij <- function(i, j, n, mat) {
   if (i < j) {
     k <- (i - 1) * (2 * n - i) / 2 + j - i
@@ -304,7 +305,6 @@ NR.MWR <- function(beta, delta, Zd, Z, W, ep = 1e-8) {
 #'
 #' @description Fit a multiplicative win ratio (MWR) regression model to
 #' partially ordered outcome against covariates
-#'
 #' @param Y An \eqn{n\times K} matrix containing \eqn{n} observations
 #' of a \eqn{K}-dimensional outcome variable
 #' (whose components must be of the same variable type).
