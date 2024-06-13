@@ -31,8 +31,8 @@ Perform the win ratio (WR) analysis comparing a treatment to a control group.
 
 }
 \references{
-Mao, L. and Wang, T. (2022+). Win ratio for partially ordered data.
-Biometrika, In press.
+Mao, L. (2024). Win ratio for partially ordered data.
+Statistica Sinica, Under revision.
 }
 \seealso{
 \code{\link{print.WRtest}},

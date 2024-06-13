@@ -37,8 +37,8 @@
 #' \item{logWR,se}{Log-win ratio estimate and its standard error.}
 #' \item{pval}{\eqn{p}-value of testing WR=1.}
 #' @importFrom stats pnorm
-#' @references Mao, L. and Wang, T. (2022+). Win ratio for partially ordered data.
-#' Biometrika, In press.
+#' @references Mao, L. (2024). Win ratio for partially ordered data.
+#' Statistica Sinica, Under revision.
 #' @examples
 #' # load the HF-ACTION trial data
 #'

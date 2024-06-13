@@ -12,6 +12,7 @@ Win ratio approach to partially ordered data, such as multivariate ordinal respo
 Useful links:
 \itemize{
   \item \url{https://sites.google.com/view/lmaowisc/}
+  \item \url{https://lmaowisc.github.io/poset/}
 }
 
 }
