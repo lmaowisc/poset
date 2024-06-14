@@ -3,7 +3,7 @@
 \docType{data}
 \name{liver}
 \alias{liver}
-\title{A dataset from a non-alcoholic fatty liver disease}
+\title{A dataset from a non-alcoholic fatty liver disease study}
 \format{
 A data frame with 186 rows (one per patient) and 7 variables:
 \describe{

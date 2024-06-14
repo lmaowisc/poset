@@ -2,7 +2,7 @@
 % Please edit documentation in R/win_ratio_functions.R
 \name{wreg}
 \alias{wreg}
-\title{Multiplicative win ratio (MWR) regression analysis}
+\title{Multiplicative win ratio regression analysis}
 \usage{
 wreg(Y, Z, wf = NULL, sfun = NULL, ep = 1e-06)
 }

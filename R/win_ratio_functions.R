@@ -3,23 +3,6 @@
 
 # Two-sample win ratio ----------------------------------------------------
 
-#################### Two-sample win ratio######################################
-# Input:
-# dat1: n1 x p matrix (trt data)
-# dat0: n0 x p matrix (control data)
-# winfun: win function taking on two p-dimensional
-# vectors y1, y0 and returning
-#     1 if y1 wins
-#    -1 if y0 wins
-#     0 if indeterminate
-#
-# Output:
-# log.WR: log-win ratio
-# se: estimated standard error of log.WR
-# wl: bivariate vector of win-loss probabilities
-###########################################################################
-
-
 #' Two-sample win ratio (net benefit) analysis
 #'
 #' @description Estimate and make inference on win ratio (net benefit) comparing a treatment to a control group.
@@ -198,11 +181,8 @@ wprod <- function(y1, y2) {
 
 
 
+# Win ratio regression ----------------------------------------------------
 
-
-#################################################################################
-##    Multiplicative win ratio regression model for multivariate ordinal data   #
-#################################################################################
 
 ########################################
 # For a matrix mat: n*(n-1)/2 x p
@@ -347,7 +327,7 @@ NR.MWR <- function(beta, delta, Zd, Z, W, ep = 1e-8) {
 }
 
 
-#' Multiplicative win ratio (MWR) regression analysis
+#' Multiplicative win ratio regression analysis
 #'
 #' @description Fit a multiplicative win ratio (MWR) regression model to
 #' partially ordered outcome against covariates
