@@ -1,6 +1,6 @@
 
 
-#' A dataset from a non-alcoholic fatty liver disease
+#' A dataset from a non-alcoholic fatty liver disease study
 #'
 #' @description A total of 186 patients with non-alcoholic fatty liver disease were recruited
 #' at the University of Wisconsin Hospitals in 2017. The patients underwent
