@@ -2,7 +2,6 @@
 % Please edit documentation in R/win_ratio_functions.R
 \name{wprod}
 \alias{wprod}
-\alias{WRtest}
 \title{The product-order win function for multivariate ordinal data}
 \usage{
 wprod(y1, y2)
@@ -10,24 +9,23 @@ wprod(y1, y2)
 \arguments{
 \item{y1}{A \eqn{K}-dimensional vector \eqn{y_1}.}
 
-\item{y0}{A \eqn{K}-dimensional vector  \eqn{y_0}.}
+\item{y2}{A \eqn{K}-dimensional vector  \eqn{y_2}.}
 }
 \value{
 An integer in \eqn{{1, 0, -1}}:
-        \item{1}{If \eqn{y_1 \ge y_0} component-wise, with strict inequality for at least
+        \item{1}{If \eqn{y_1 \ge y_2} component-wise, with strict inequality for at least
                  one component.}
-        \item{-1}{If \eqn{y_0 \ge y_1} component-wise, with strict inequality for at least
+        \item{-1}{If \eqn{y_0 \ge y_2} component-wise, with strict inequality for at least
                  one component.}
         \item{0}{Otherwise.}
 }
 \description{
 A commonly used rule to compare
-   multivariate ordinal data in \code{\link{WRtest}}. A winner has all its components
+   multivariate ordinal data in \code{\link{wrtest}}. A winner has all its components
    greater than or equal to those of the loser, and strictly
    so for at least one component.
 }
 \seealso{
-\code{\link{WRtest}}, \code{\link{print.WRtest}},
-\code{\link{summary.WRtest}}.
+\code{\link{wrtest}}, \code{\link{print.wrtest}}.
 }
-\keyword{WRtest}
+\keyword{wrtest}

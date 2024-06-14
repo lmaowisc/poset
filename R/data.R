@@ -1,26 +1,25 @@
 
-#' A dataset from the HF-ACTION trial
+
+#' A dataset from a non-alcoholic fatty liver disease
 #'
-#' @description The Heart Failure: A Controlled Trial Investigating Outcomes of Exercise Training
-#' (HF-ACTION) study was conducted between 2003--2007 to investigate whether
-#' adding exercise training to the usual care of heart failure patients improves their cardiovascular outcomes (O'Conner et al., 2009).
-#' This dataset is for a high-risk subgroup consisting of 741 nonischemic patients with
-#' baseline cardiopulmonary test duration less than or equal to 12 minutes
-#' and analyze recurrent hospitalizations as well as overall survival.
+#' @description A total of 186 patients with non-alcoholic fatty liver disease were recruited
+#' at the University of Wisconsin Hospitals in 2017. The patients underwent
+#' computed tomography scan of the liver for the presence of non-alcoholic
+#' steato-hepatitis, the most severe form of non-alcoholic fatty liver disease.
+#' The image was subsequently assessed by two radiologists using a scale of 1
+#' to 5, with higher values indicating greater likelihood of disease.
 #'
 #'
-#'
-#' @format A data frame with 2,132 rows and 4 variables:
+#' @format A data frame with 186 rows (one per patient) and 7 variables:
 #' \describe{
-#'   \item{id}{Unique patient ID.}
-#'   \item{time}{Event time (years).}
-#'   \item{status}{Event type; 1 = hospitalization, 2 = death, 0 = censoring.}
-#'   \item{trt}{1 = exercise training, 0 = usual care.}
+#'   \item{R1-NASH, R2-NASH}{Unique patient ID.}
+#'   \item{Sex}{\code{M}: male; \code{F}: female.}
+#'   \item{AF}{Advanced fibrosis (\code{TRUE} or \code{FALSE}).}
+#'   \item{Steatosis}{Percent of steatosis.}
+#'   \item{SSF2}{Liver mean gray level intensity.}
+#'   \item{LSN}{Liver surface nodularity.}
 #'   }
-#' @references O'CONNOR, C. M., WHELLAN, D. J., LEE, K. L., KETEYIAN, S. J.,
-#'  COOPER, L. S., ELLIS, S. J., LEIFER, E. S.,
-#' KRAUS, W. E., KITZMAN, D. W., BLUMENTHAL, J. A. et al. (2009).
-#' Efficacy and safety of exercise training in
-#'  patients with chronic heart failure: Hf-action randomized controlled trial.
-#'  J. Am. Med. Assoc. 301, 1439--1450.
+#' @references
+#' Mao, L. (2024). Win ratio for partially ordered data.
+#' \emph{Statistica Sinica}, Under revision.
 "liver"
