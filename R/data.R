@@ -7,12 +7,13 @@
 #' computed tomography scan of the liver for the presence of non-alcoholic
 #' steato-hepatitis, the most severe form of non-alcoholic fatty liver disease.
 #' The image was subsequently assessed by two radiologists using a scale of 1
-#' to 5, with higher values indicating greater likelihood of disease.
+#' to 5, with higher values indicating greater likelihood of disease. This is
+#'  a slightly altered dataset from the one used in Mao (2024).
 #'
 #'
 #' @format A data frame with 186 rows (one per patient) and 7 variables:
 #' \describe{
-#'   \item{R1-NASH, R2-NASH}{Unique patient ID.}
+#'   \item{R1NASH, R2NASH}{Unique patient ID.}
 #'   \item{Sex}{\code{M}: male; \code{F}: female.}
 #'   \item{AF}{Advanced fibrosis (\code{TRUE} or \code{FALSE}).}
 #'   \item{Steatosis}{Percent of steatosis.}

@@ -2,42 +2,44 @@
 % Please edit documentation in R/win_ratio_functions.R
 \name{wreg}
 \alias{wreg}
-\title{Multiplicative win ratio regression analysis}
+\title{Win ratio regression analysis}
 \usage{
-wreg(Y, Z, wf = NULL, sfun = NULL, ep = 1e-06)
+wreg(Y, Z, fun = NULL, sfun = NULL, ep = 1e-06)
 }
 \arguments{
-\item{Y}{An \eqn{n\times K} matrix containing \eqn{n} observations
-of a \eqn{K}-dimensional outcome variable
-(whose components must be of the same variable type).}
+\item{Y}{An \eqn{n\times K} matrix for \eqn{K}-variate response data on \eqn{n} subjects.
+ The entries must be numeric scores.
+ For pseudo-efficient estimation with specifying score function \code{sfun},
+ the average score across components (row means)
+should be compatible with the partial order (i.e., a monotone function on ordered elements).}
 
 \item{Z}{An \eqn{n\times p} design matrix for covariates.}
 
-\item{wf}{User-specified win function for pairwise comparison.
+\item{fun}{User-specified win function for pairwise comparison.
 It takes two arguments \eqn{y_1}
-and \eqn{y_0} (both \eqn{K}-dimensional) and returns 1 if \eqn{y_1} wins,
+and \eqn{y_0} (both \eqn{p}-dimensional) and returns 1 if \eqn{y_1} wins,
 -1 if \eqn{y_0} wins, and 0 if tied. The default is \code{\link{wprod}}
 based on the product order of multivariate ordinal data.}
 
-\item{sfun}{The score function used in pseudo-efficient estimation (can be bypassed).}
+\item{sfun}{The score function used in pseudo-efficient estimation.
+The default is the mean of component-wise numeric scores in \code{Y}.}
 
 \item{ep}{Convergence criterion in Newton-Raphson algorithm. The default is 1e-6.}
 }
 \value{
 An object of class \code{wreg} with the following components:
-
 \item{beta}{A vector of estimated regression coefficients.}
-\item{Sigma}{Estimated covariance matrix for \code{beta}}
+\item{var}{Estimated covariance matrix for \code{beta}}
 \item{l}{Number of Newton-Raphson iterations.}
 \item{beta_nv}{Naive (non-pseudo-efficient) estimates of \code{beta}.}
 \item{se_nv}{Estimated standard errors for \code{beta_nv}.}
-\item{n}{Sample size \eqn{n} of input data.}
-\item{Nwl}{Number of comparable pairs (those with a winner and loser)
-out of the \eqn{n(n+1)/2} possible ones.}
+\item{n}{Sample size \eqn{n} of input data with non-missing values.}
+\item{Nwl}{Number of comparable pairs (those with a win and loss)
+out of the \eqn{n(n-1)/2} possible ones.}
 }
 \description{
-Fit a multiplicative win ratio (MWR) regression model to
-partially ordered outcome against covariates
+Fit a multiplicative win-ratio regression model to
+partially ordered outcome against covariates.
 }
 \examples{
 set.seed(12345)
@@ -51,7 +53,7 @@ obj1$beta/sqrt(diag(obj1$Sigma))
 }
 \references{
 Mao, L. (2024). Win ratio for partially ordered data.
-Statistica Sinica, Under revision.
+\emph{Statistica Sinica}, Under revision.
 }
 \seealso{
 \code{\link{wprod}}

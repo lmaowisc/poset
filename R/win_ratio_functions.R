@@ -28,6 +28,7 @@
 #'  \emph{Statistics in Medicine}, 29, 3245-3257.
 #' @keywords wrtest
 #' @importFrom stats pnorm
+#' @importFrom stats complete.cases
 #' @export
 #' @aliases wrtest
 #' @seealso \code{\link{print.wrtest}}.
@@ -183,175 +184,33 @@ wprod <- function(y1, y2) {
 
 # Win ratio regression ----------------------------------------------------
 
-
-########################################
-# For a matrix mat: n*(n-1)/2 x p
-# whose rows are the p-vector valued
-# anti-symmetric function f_ij
-# in the order
-# (1, 2)
-# (1, 3)
-# ...
-# (2 ,3)
-# (2, 4)
-# ...
-# (n-1, n)
-#
-# The following function extracts
-# f_ij from mat
-########################################
-
-antifun_ij <- function(i, j, n, mat) {
-  if (i < j) {
-    k <- (i - 1) * (2 * n - i) / 2 + j - i
-    return(mat[k, ])
-  } else {
-    if (i > j) {
-      k <- (j - 1) * (2 * n - j) / 2 + i - j
-      return(-mat[k, ])
-    } else {
-      return(rep(0, ncol(mat)))
-    }
-  }
-}
-
-
-###################
-# Test antifun_ij #
-###################
-# antifun_ij(6,5,n,Zd)
-# data[1:10,]
-
-
-
-
-######################################
-# Ef(x_i, X) for *symmetric* function f
-# whose values are contained in the
-# rows of mat
-######################################
-
-mean_i <- function(i, n, mat) {
-  mat <- as.matrix(mat)
-  k.list <- NULL
-  if (i > 1) {
-    j <- 1:(i - 1)
-    k.list <- c(k.list, (j - 1) * (2 * n - j) / 2 + i - j)
-  }
-  if (i < n) {
-    j <- (i + 1):n
-    k.list <- c(k.list, (i - 1) * (2 * n - i) / 2 + j - i)
-  }
-  return(colSums(as.matrix(mat[k.list, ])) / (n - 1))
-}
-
-###############
-# Test mean_i #
-###############
-# mean_i(i=9,n=n,mat=delta*Zd)
-#
-# tmp=0
-# for (i in 1:n){
-#   tmp=tmp+winp(data[9,1:2],data[i,1:2])*(data[9,3]-data[i,3])
-# }
-# tmp/(n-1)
-
-###################################
-# Newton-Raphson algorithm
-###################################
-NR.MWR <- function(beta, delta, Zd, Z, W, ep = 1e-8) {
-  N <- nrow(Zd)
-  n <- nrow(Z)
-  i.list <- rep(NA, N)
-  j.list <- rep(NA, N)
-  for (i in 1:(n - 1)) {
-    i.list[((i - 1) * (2 * n - i) / 2 + 1):(i * (2 * n - i - 1) / 2)] <- i
-    j.list[((i - 1) * (2 * n - i) / 2 + 1):(i * (2 * n - i - 1) / 2)] <- (i + 1):n
-  }
-
-
-  p <- length(beta)
-
-  err <- 1
-  l <- 0
-
-  maxiter <- 100
-  # NR algorithm
-
-  while (err > ep && l < maxiter) {
-    eta <- exp(Z %*% beta)
-
-    eta.i <- eta[i.list]
-    eta.j <- eta[j.list]
-
-    Wresid <- W * delta * ifelse(delta == 1, eta.j, ifelse(delta == -1, eta.i, 0))
-
-    Uf.mat <- Zd * matrix(rep(Wresid, p), N, p)
-
-    Uf <- colMeans(Uf.mat)
-
-    wz <- abs(delta) * W / (1 / eta.i + 1 / eta.j)
-
-
-    Zdw <- Zd * matrix(rep(wz, p), N, p)
-
-    Omega <- t(Zdw) %*% Zd / N
-
-    betap <- beta
-
-    beta <- beta + solve(Omega) %*% Uf
-
-    err <- sum(abs(beta - betap))
-    l <- l + 1
-  }
-
-  ## variance estimation
-
-  # Influence function
-
-  if.fun <- function(i) {
-    return(mean_i(i, n, Uf.mat))
-  }
-
-  psi.mat <- sapply(1:n, if.fun)
-  if (is.vector(psi.mat)){
-    psi.mat <- t(as.matrix(psi.mat))
-  }
-  # cat(dim(psi.mat),"\n")
-  # dim(psi.mat)
-  invOmega <- solve(Omega)
-  Sigma <- 4 * invOmega %*% (psi.mat %*% t(psi.mat)) %*% invOmega / (n * (n - p))
-
-
-  return(list(beta = beta, Sigma = Sigma, err = err, l = l))
-}
-
-
-#' Multiplicative win ratio regression analysis
+#' Win ratio regression analysis
 #'
-#' @description Fit a multiplicative win ratio (MWR) regression model to
-#' partially ordered outcome against covariates
-#' @param Y An \eqn{n\times K} matrix containing \eqn{n} observations
-#' of a \eqn{K}-dimensional outcome variable
-#' (whose components must be of the same variable type).
+#' @description Fit a multiplicative win-ratio regression model to
+#' partially ordered outcome against covariates.
+#' @param Y An \eqn{n\times K} matrix for \eqn{K}-variate response data on \eqn{n} subjects.
+#'  The entries must be numeric scores.
+#'  For pseudo-efficient estimation with specifying score function \code{sfun},
+#'  the average score across components (row means)
+#' should be compatible with the partial order (i.e., a monotone function on ordered elements).
 #' @param Z An \eqn{n\times p} design matrix for covariates.
-#' @param wf User-specified win function for pairwise comparison.
+#' @param fun User-specified win function for pairwise comparison.
 #'      It takes two arguments \eqn{y_1}
-#'      and \eqn{y_0} (both \eqn{K}-dimensional) and returns 1 if \eqn{y_1} wins,
+#'      and \eqn{y_0} (both \eqn{p}-dimensional) and returns 1 if \eqn{y_1} wins,
 #'      -1 if \eqn{y_0} wins, and 0 if tied. The default is \code{\link{wprod}}
 #'      based on the product order of multivariate ordinal data.
-#' @param sfun The score function used in pseudo-efficient estimation (can be bypassed).
+#' @param sfun The score function used in pseudo-efficient estimation.
+#'    The default is the mean of component-wise numeric scores in \code{Y}.
 #' @param ep Convergence criterion in Newton-Raphson algorithm. The default is 1e-6.
 #' @return An object of class \code{wreg} with the following components:
-#'
 #' \item{beta}{A vector of estimated regression coefficients.}
-#' \item{Sigma}{Estimated covariance matrix for \code{beta}}
+#' \item{var}{Estimated covariance matrix for \code{beta}}
 #' \item{l}{Number of Newton-Raphson iterations.}
 #' \item{beta_nv}{Naive (non-pseudo-efficient) estimates of \code{beta}.}
 #' \item{se_nv}{Estimated standard errors for \code{beta_nv}.}
-#' \item{n}{Sample size \eqn{n} of input data.}
-#' \item{Nwl}{Number of comparable pairs (those with a winner and loser)
-#' out of the \eqn{n(n+1)/2} possible ones.}
+#' \item{n}{Sample size \eqn{n} of input data with non-missing values.}
+#' \item{Nwl}{Number of comparable pairs (those with a win and loss)
+#' out of the \eqn{n(n-1)/2} possible ones.}
 
 #' @seealso \code{\link{wprod}}
 #' @export
@@ -360,7 +219,7 @@ NR.MWR <- function(beta, delta, Zd, Z, W, ep = 1e-8) {
 #' @aliases wreg
 #' @keywords wreg
 #' @references Mao, L. (2024). Win ratio for partially ordered data.
-#' Statistica Sinica, Under revision.
+#' \emph{Statistica Sinica}, Under revision.
 #' @examples
 #' set.seed(12345)
 #' n <- 200
@@ -370,12 +229,10 @@ NR.MWR <- function(beta, delta, Zd, Z, W, ep = 1e-8) {
 #' obj1$beta
 #' sqrt(diag(obj1$Sigma))
 #' obj1$beta/sqrt(diag(obj1$Sigma))
+wreg <- function(Y, Z, fun = NULL, sfun = NULL, ep = 1e-6) {
 
-wreg <- function(Y, Z, wf = NULL, sfun = NULL, ep = 1e-6) {
-
-
-  if (is.null(wf)) {
-    wf <- wprod
+  if (is.null(fun)) {
+    fun <- wprod
     win = "mvprod"
   }
 
@@ -415,7 +272,7 @@ wreg <- function(Y, Z, wf = NULL, sfun = NULL, ep = 1e-6) {
     yi <- xi[1:K]
     yj <- xj[1:K]
 
-    dij <- wf(yi, yj)
+    dij <- fun(yi, yj)
 
     l <- length(xi)
     Zdij <- xi[(K + 1):l] - xj[(K + 1):l]
@@ -492,7 +349,7 @@ wreg <- function(Y, Z, wf = NULL, sfun = NULL, ep = 1e-6) {
   # compute efficient weights Weff
   # function dependent on ghat and eta
 
-  Weff <- as.matrix(combn(eta, 2, function(x) {
+  Weff <- as.matrix(combn(etag, 2, function(x) {
     ((1 + x[1]) * (1 + x[2]))^{-1}
     }))
 
@@ -505,11 +362,157 @@ wreg <- function(Y, Z, wf = NULL, sfun = NULL, ep = 1e-6) {
 
   Nwl <- sum(delta != 0)
 
+  obj <- list(beta = beta, var = Sigma,
+                 l = l, beta_nv = beta_nv, se_nv = se_nv,
+                 n = n, N = n * (n - 1) /2, Nwl = Nwl,
+                  Y = Y, Z = Z)
+  obj$call <- match.call()
+  class(obj) <- "wreg"
 
-
-  result <- list(beta = beta, Sigma = Sigma, l = l, beta_nv = beta_nv, se_nv = se_nv, n = n, Nwl = Nwl)
-
-  class(result) <- "wreg"
-
-  return(result)
+  return(obj)
 }
+
+#' Print concise model results from \code{wreg}
+#'
+#' @description Print concise results for win ratio regression analysis.
+#'
+#' @param x An object returned by \code{\link{wreg}}.
+#' @param ... Further arguments passed to or from other methods
+#' @return No return value, called for side effects.
+#' @export
+#' @seealso \code{\link{wrtest}}.
+print.wreg=function(x,...){
+  cat("Call:\n")
+  print(x$call)
+  cat("\n")
+  ## number of subjects
+  cat("n = ", x$n, " subjects with complete data\n", sep ="")
+  cat("Comparable (win/loss) pairs: ", x$Nwl, "/", x$N, " = ",
+      round(100 * x$Nwl / x$N, 1), "%\n\n", sep ="")
+  # print out beta
+  beta_tab <- as.matrix(t(x$beta))
+  colnames(beta_tab) <- colnames(Z)
+  rownames(beta_tab) <- ""
+  print(as.data.frame(beta_tab))
+  # print(desc)
+}
+
+
+
+#' Summarize model results from \code{wreg}
+#'
+#' Summarize the inferential results for regression
+#'
+#'
+#' @param x An object returned by \code{\link{wreg}}.
+#' @param ...  Additional arguments affecting the summary produced.
+#'
+#' @return An object of class \code{summary.wreg} with components
+#'
+#' \item{coefficients}{A \eqn{(J\times 4)}-dimensional matrix containing the inference
+#' results for the log-loss rate; Columns include
+#' \code{Estimate}, \code{Std.Err}, \code{Z value}, and \code{Pr(>|z|)}.}
+#' @seealso \code{\link{wreg}}.
+#' @keywords wreg
+#' @importFrom stats pchisq pnorm
+#' @examples
+#' #See examples for wreg().
+#' @export
+summary.wreg=function(x, ...){
+
+  beta <- x$beta
+  var <- x$var
+
+  cat("Call:\n")
+  print(x$call)
+  cat("\n")
+  ## number of subjects
+  cat("n = ", x$n, " subjects with complete data\n", sep ="")
+  cat("Comparable (win/loss) pairs: ", x$Nwl, "/", x$N, " = ",
+      round(100 * x$Nwl / x$N, 1), "%\n\n", sep ="")
+
+  # create summary table
+  p <- length(beta)
+
+  coefficients <- matrix(NA,J,4)
+
+
+  Dtab=matrix(NA,J,4)
+
+  # rownames(LRtab)=c(paste0("Ref (Group ",groups[1],")"),
+                    # paste0("Group ",groups[2:J]," vs ",ref))
+  # colnames(LRtab)=c("Estimate", "Std.Err", "Z value", "Pr(>|z|)")
+
+
+
+
+  class(result)<-"summary.wreg"
+  return(result)
+
+
+
+}
+
+
+
+
+
+#' Print method for summary.LRfit objects
+#'
+#' Produces a printed summary of the results for the while-alive loss rate
+#'
+#' @param x An object returned by \code{\link{summary.LRfit}}.
+#' @param ... Further arguments passed to or from other methods
+#' @return No return value, called for side effects.
+#' @export
+#' @importFrom stats printCoefmat
+print.summary.wreg=function(x,...){
+
+  cat("Call:\n")
+  print(x$call)
+  cat("\n")
+  tau=x$tau
+  joint.test=x$joint.test
+  J<-x$J
+  # p-value for the (J-1)-d.f. test on loss rate
+  LRchisq=x$LRchisq
+  LRpval=x$LRpval
+
+  # table for loss rate
+  LRtab<-x$LRtab
+  cat("Analysis of log loss rate (LR) by tau = ",tau, ":\n",sep="")
+  printCoefmat(LRtab, P.values=TRUE, has.Pvalue=TRUE)
+  cat("\n")
+
+  cat("Test of group difference in while-alive LR\n")
+  cat("X-squared = ", LRchisq, ", df = ",J-1,", p = ",LRpval, sep="")
+
+  ## exponentiated table for loss rate ratio
+  za<-qnorm(0.975)
+  beta<-LRtab[2:J,1]
+  se<-LRtab[2:J,2]
+  LRR<-cbind(exp(beta),exp(beta-za*se),exp(beta+za*se))
+  colnames(LRR)<-c("LR ratio","95% lower CL","95% higher CL")
+  rownames(LRR)<-rownames(LRtab)[2:J]
+  cat("\n\n")
+  cat("Point and interval estimates for the LR ratio:\n")
+  print(LRR)
+  if (joint.test){
+    # table for RMST
+    Dtab<-x$Dtab
+    LRDchisq<-x$LRDchisq
+    LRDpval<-x$LRDpval
+    cat("\n\n")
+    cat("Analysis of log RMST (restricted mean survival time) by tau = ",tau, ":\n",sep="")
+    printCoefmat(Dtab, P.values=TRUE, has.Pvalue=TRUE)
+    cat("\n\n")
+    cat("Test of group difference in while-alive LR and RMST\n")
+    cat("X-squared = ", LRDchisq, ", df = ",2*(J-1),", p = ",LRDpval, sep="")
+
+  }
+
+
+
+
+}
+

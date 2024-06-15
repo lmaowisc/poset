@@ -1,6 +1,6 @@
 ---
-title: "The win ratio analysis of partially ordered data"
-author: Lu Mao (lmao@biostat.wisc.edu)
+title: "Multivariate ordinal response"
+# author: Lu Mao (lmao@biostat.wisc.edu)
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{poset_WR}
