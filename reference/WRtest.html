@@ -24,7 +24,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/poset_WR.html">The win ratio analysis of partially ordered data</a>
+    <a class="dropdown-item" href="../articles/poset_WR.html">Multivariate ordinal response</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -100,13 +100,13 @@ based on the product order of multivariate ordinal data.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">liver</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   R1-NASH R2-NASH Sex    AF Steatosis  SSF2  LSN</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       3       2   M FALSE        30  0.21 2.33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1       1   F FALSE         5  0.38 2.86</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       4       2   M FALSE        70  0.58 3.65</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       4       4   F  TRUE        30 -0.08 2.73</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       4       3   M  TRUE        70 -0.04 2.53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       3       3   M FALSE        10  0.02 2.88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   R1NASH R2NASH Sex    AF Steatosis  SSF2  LSN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      3      2   M FALSE        30  0.21 2.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      1      1   F FALSE         5  0.38 2.86</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      4      2   M FALSE        70  0.58 3.65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      4      4   F  TRUE        30 -0.08 2.73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      4      3   M  TRUE        70 -0.04 2.53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      3      3   M FALSE        10  0.02 2.88</span>
 <span class="r-in"><span><span class="co">### data example</span></span></span>
 <span class="r-in"><span><span class="co">## compare bivariate fibrosis ratings between fibrosis</span></span></span>
 <span class="r-in"><span><span class="co">## stages &gt;= 3 and &lt; 3</span></span></span>
