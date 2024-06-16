@@ -124,7 +124,7 @@ For more detailed inference results:
 summary(obj)
 ```
 
-Advanced fibrosis status and percent of steatosis are strongly and significantly associated with the likelihood of non-alcoholic steato-hepatitis. In particular, AF is $38.1\%$ times as likely to have favorable reader assessments as non-AF. Furthermore, one percentage point increase in steatosis results in $1-97259\doteq 2.7\%$ reduction in the likelihood of favorable assessments.
+Advanced fibrosis status and percent of steatosis are strongly and significantly associated with the likelihood of non-alcoholic steato-hepatitis. In particular, AF is $38.1\%$ times as likely to have favorable reader assessments as non-AF. Furthermore, one percentage point increase in steatosis results in $1-0.97259\doteq 2.7\%$ reduction in the likelihood of favorable assessments.
 
 ### Exercise
 
