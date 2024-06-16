@@ -97,26 +97,65 @@ for <span class="math inline">\(Y_j\)</span>.</p>
 </h3>
 <p>Let <span class="math inline">\(Z = 1, 0\)</span> be a binary
 indicator for treatment and control groups, respectively. The
-probability of a treated winning against an untreated is <span class="math inline">\(P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)\)</span>.
-Likewise, that of a treated winning against an untreated is</p>
+probability of a treated <em>winning</em> against an untreated is <span class="math inline">\(P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)\)</span>.
+Likewise, that of a treated <em>losing</em> to an untreated is <span class="math inline">\(P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)\)</span>. To
+summarize the relative favorability of treatment against control: <span class="math display">\[\begin{align}\tag{1}
+\mbox{Win ratio: } \hspace{1ex}&amp;  WR = \frac{P(Y_i\succ Y_j\mid Z_i
+= 1, Z_j = 0)}{P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)}\\
+\mbox{Net benefit: } \hspace{1ex}&amp;  NB = P(Y_i\succ Y_j\mid Z_i = 1,
+Z_j = 0) -
+P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0).
+\end{align}\]</span></p>
+<p>Given <span class="math inline">\((Y_i, Z_i)\)</span> <span class="math inline">\((i=1,\ldots, n)\)</span>, a random <span class="math inline">\(n\)</span>-sample of <span class="math inline">\((Y, Z)\)</span>, standard two-sample <span class="math inline">\(U\)</span>-statistics can be used to estimate the
+win and loss probabilities, which can replace the target quantities in
+(1) for nonparametric estimates of WR and NB.</p>
 </div>
 <div class="section level3">
 <h3 id="win-ratio-regression">Win ratio regression<a class="anchor" aria-label="anchor" href="#win-ratio-regression"></a>
 </h3>
+<p>If <span class="math inline">\(Z\)</span> is non-binary but rather a
+<span class="math inline">\(p\)</span>-vector of possibly continuous
+components, the nonparametric approach no longer works. Instead, we
+posit a multiplicative win ratio model <span class="math display">\[\begin{align}\tag{2}
+WR(Z_i, Z_j) := \frac{P(Y_i\succ Y_j\mid Z_i, Z_j)}{P(Y_i\prec Y_j\mid
+Z_i, Z_j)}
+=\exp\{\beta^{\rm T}(Z_i - Z_j)\}.
+\end{align}\]</span> This means that unit increases in the covariates
+lead to win ratios <span class="math inline">\(\exp(\beta)\)</span>
+(component-wise). Standard estimators of <span class="math inline">\(\exp(\beta)\)</span> reduce to the two-sample win
+ratio when <span class="math inline">\(Z = 1, 0\)</span>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="code-and-example">Code and Example<a class="anchor" aria-label="anchor" href="#code-and-example"></a>
 </h2>
+<p>Load the package:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sites.google.com/view/lmaowisc/" class="external-link">poset</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="basic-syntax">Basic syntax<a class="anchor" aria-label="anchor" href="#basic-syntax"></a>
 </h3>
+<p>For two-sample WR/NB,</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/WRtest.html">wrtest</a></span><span class="op">(</span><span class="va">Y1</span>, <span class="va">Y0</span>, fun <span class="op">=</span> <span class="va">wprod</span><span class="op">)</span></span></code></pre></div>
+<p>where <code>Y1</code> and <code>Y0</code> are response matrices in
+the treatment and control, respectively, each with <span class="math inline">\(K\)</span> columns for the <span class="math inline">\(K\)</span> components. <code>fun</code> can be a
+user-defined function that takes on two <span class="math inline">\(K\)</span>-vectors and that outputs <span class="math inline">\(1\)</span>, <span class="math inline">\(-1\)</span>, <span class="math inline">\(0\)</span> if the first wins, loses, or ties with
+the second, respectively. The default is a function for the consensus
+(product) order.</p>
+<p>For win ratio regression,</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wreg.html">wreg</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Z</span>, fun <span class="op">=</span> <span class="va">wprod</span><span class="op">)</span></span></code></pre></div>
+<p>where <code>Y</code> is an <span class="math inline">\(n\times
+K\)</span> response matrix and <span class="math inline">\(Z\)</span> is
+an <span class="math inline">\(n\times p\)</span> design (covariate)
+matrix. Again, the win function can be customized in <code>fun</code>.
+<code>summary(obj)</code> to print out summary results including
+regression tables.</p>
 </div>
 <div class="section level3">
 <h3 id="a-data-example">A data example<a class="anchor" aria-label="anchor" href="#a-data-example"></a>
 </h3>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sites.google.com/view/lmaowisc/" class="external-link">poset</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
