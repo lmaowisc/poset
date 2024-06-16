@@ -4,22 +4,23 @@
 \alias{summary.wreg}
 \title{Summarize model results from \code{wreg}}
 \usage{
-\method{summary}{wreg}(x, ...)
+\method{summary}{wreg}(object, ...)
 }
 \arguments{
-\item{x}{An object returned by \code{\link{wreg}}.}
+\item{object}{An object returned by \code{\link{wreg}}.}
 
 \item{...}{Additional arguments affecting the summary produced.}
 }
 \value{
 An object of class \code{summary.wreg} with components
 
-\item{coefficients}{A \eqn{(J\times 4)}-dimensional matrix containing the inference
-results for the log-loss rate; Columns include
-\code{Estimate}, \code{Std.Err}, \code{Z value}, and \code{Pr(>|z|)}.}
+\item{coefficients}{A matrix of coefficients, standard errors, z-values and p-values.}
+\item{exp_coef}{A matrix of win ratios (exp(coef)) and 95\% confidence intervals.}
+\item{wald, wald_pval}{Wald test statistic on all covariates and p-value.}
+\item{...}{}
 }
 \description{
-Summarize the inferential results for regression
+Summarize the inferential results for win ratio regression.
 }
 \examples{
 #See examples for wreg().

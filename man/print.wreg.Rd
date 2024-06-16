@@ -15,7 +15,7 @@
 No return value, called for side effects.
 }
 \description{
-Print concise results for win ratio regression analysis.
+Print concise results for win ratio regression.
 }
 \seealso{
 \code{\link{wrtest}}.

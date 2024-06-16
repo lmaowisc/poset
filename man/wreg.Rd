@@ -42,14 +42,14 @@ Fit a multiplicative win-ratio regression model to
 partially ordered outcome against covariates.
 }
 \examples{
-set.seed(12345)
-n <- 200
-Z <- cbind(rnorm(n),rnorm(n))
-Y1 <- rbinom(n,1,exp(Z[,1])/(1+exp(Z[,1])))
-obj1 <- wreg(Y1,Z)
-obj1$beta
-sqrt(diag(obj1$Sigma))
-obj1$beta/sqrt(diag(obj1$Sigma))
+head(liver)
+# regress bivariate ratings against covariates
+Y <- 5 - liver[, c("R1NASH", "R2NASH")] # lower score is better
+Z <- cbind("Female" = liver$Sex == "F",
+           liver[, c("AF", "Steatosis",   "SSF2",  "LSN")]) # covariates
+obj <- wreg(Y, Z) # fit model
+obj
+summary(obj)
 }
 \references{
 Mao, L. (2024). Win ratio for partially ordered data.

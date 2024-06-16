@@ -1,0 +1,47 @@
+---
+title: "Multivariate ordinal response"
+# author: Lu Mao (lmao@biostat.wisc.edu)
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{poset_WR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates the win ratio (or net benefit) approach to multivariate ordinal data, under consensus or prioritized order between components.
+
+## Data and Methodology
+
+Let $Y = (y_1,\ldots, y_K)$ be a $K$-vector of ordinal responses, where without loss of generality we denote $y_k =0,1,\ldots, m_k -1$ 
+These may be rating scores provided by different readers on the same subject's medical
+image. The vector-valued response can be partially ordered by component-wise consensus, 
+that is, we say $Y_i\prec Y_j$ if $Y_i\leq Y_j$ component-wise, with strict inequality
+for at least one component. Alternatively, if some reader, say the first one, is more experienced than the rest, their score can be prioritized. Then we say 
+$Y_i\prec Y_j$ if $y_{1i} < y_{1j}$, or $y_{1i} = y_{1j}$ and a consensus order
+holds on the other components. In either case, we assume that a higher score is better,
+so that $Y_i\succ Y_j$ (or $Y_j\prec Y_i$) means a "win" for $Y_i$ and a "loss" for $Y_j$.
+
+### Two-group comparison
+Let $Z = 1, 0$ be a binary indicator for treatment and control groups, respectively.
+The probability of a treated winning against an untreated is
+$P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)$. Likewise, that of a treated winning against an untreated is
+
+### Win ratio regression 
+
+## Code and Example
+
+### Basic syntax
+
+### A data example
+
+
+```{r setup}
+library(poset)
+```

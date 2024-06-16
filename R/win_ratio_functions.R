@@ -24,7 +24,7 @@
 #' \emph{Statistica Sinica}, Under revision.
 #'
 #'  Buyse, M. (2010).  \href{https://doi.org/10.1002/sim.3923}{Generalized pairwise
-#'  comparisons of prioritized outcomes in the two‐sample problem.}
+#'  comparisons of prioritized outcomes in the two-sample problem.}
 #'  \emph{Statistics in Medicine}, 29, 3245-3257.
 #' @keywords wrtest
 #' @importFrom stats pnorm
@@ -34,10 +34,11 @@
 #' @seealso \code{\link{print.wrtest}}.
 #' @examples
 #' head(liver)
-#' ### data example
-#' ## compare bivariate fibrosis ratings between fibrosis
-#' ## stages >= 3 and < 3
-#'
+#' ## compare bivariate ratings by fibrosis stage
+#' Y1 <- liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
+#' Y0 <- liver[!liver$AF, c("R1NASH", "R2NASH")] # not advanced
+#' obj <- wrtest(Y1, Y0)
+#' obj
 wrtest <- function(Y1, Y0, fun = wprod) {
   # convert to matrix
   dat1 <- as.matrix(Y1)
@@ -221,14 +222,15 @@ wprod <- function(y1, y2) {
 #' @references Mao, L. (2024). Win ratio for partially ordered data.
 #' \emph{Statistica Sinica}, Under revision.
 #' @examples
-#' set.seed(12345)
-#' n <- 200
-#' Z <- cbind(rnorm(n),rnorm(n))
-#' Y1 <- rbinom(n,1,exp(Z[,1])/(1+exp(Z[,1])))
-#' obj1 <- wreg(Y1,Z)
-#' obj1$beta
-#' sqrt(diag(obj1$Sigma))
-#' obj1$beta/sqrt(diag(obj1$Sigma))
+#' head(liver)
+#' # regress bivariate ratings against covariates
+#' Y <- 5 - liver[, c("R1NASH", "R2NASH")] # lower score is better
+#' Z <- cbind("Female" = liver$Sex == "F",
+#'            liver[, c("AF", "Steatosis",   "SSF2",  "LSN")]) # covariates
+#' obj <- wreg(Y, Z) # fit model
+#' obj
+#' summary(obj)
+
 wreg <- function(Y, Z, fun = NULL, sfun = NULL, ep = 1e-6) {
 
   if (is.null(fun)) {
@@ -374,7 +376,7 @@ wreg <- function(Y, Z, fun = NULL, sfun = NULL, ep = 1e-6) {
 
 #' Print concise model results from \code{wreg}
 #'
-#' @description Print concise results for win ratio regression analysis.
+#' @description Print concise results for win ratio regression.
 #'
 #' @param x An object returned by \code{\link{wreg}}.
 #' @param ... Further arguments passed to or from other methods
@@ -391,7 +393,7 @@ print.wreg=function(x,...){
       round(100 * x$Nwl / x$N, 1), "%\n\n", sep ="")
   # print out beta
   beta_tab <- as.matrix(t(x$beta))
-  colnames(beta_tab) <- colnames(Z)
+  colnames(beta_tab) <- colnames(x$Z)
   rownames(beta_tab) <- ""
   print(as.data.frame(beta_tab))
   # print(desc)
@@ -401,49 +403,66 @@ print.wreg=function(x,...){
 
 #' Summarize model results from \code{wreg}
 #'
-#' Summarize the inferential results for regression
+#' Summarize the inferential results for win ratio regression.
 #'
 #'
-#' @param x An object returned by \code{\link{wreg}}.
+#' @param object An object returned by \code{\link{wreg}}.
 #' @param ...  Additional arguments affecting the summary produced.
 #'
 #' @return An object of class \code{summary.wreg} with components
 #'
-#' \item{coefficients}{A \eqn{(J\times 4)}-dimensional matrix containing the inference
-#' results for the log-loss rate; Columns include
-#' \code{Estimate}, \code{Std.Err}, \code{Z value}, and \code{Pr(>|z|)}.}
+#' \item{coefficients}{A matrix of coefficients, standard errors, z-values and p-values.}
+#' \item{exp_coef}{A matrix of win ratios (exp(coef)) and 95\% confidence intervals.}
+#' \item{wald, wald_pval}{Wald test statistic on all covariates and p-value.}
+#' \item{...}{}
 #' @seealso \code{\link{wreg}}.
 #' @keywords wreg
-#' @importFrom stats pchisq pnorm
+#' @importFrom stats qnorm pnorm pchisq
 #' @examples
 #' #See examples for wreg().
 #' @export
-summary.wreg=function(x, ...){
+summary.wreg=function(object, ...){
 
+  x <- object
   beta <- x$beta
   var <- x$var
+  se <- sqrt(diag(var))
 
-  cat("Call:\n")
-  print(x$call)
-  cat("\n")
-  ## number of subjects
-  cat("n = ", x$n, " subjects with complete data\n", sep ="")
-  cat("Comparable (win/loss) pairs: ", x$Nwl, "/", x$N, " = ",
-      round(100 * x$Nwl / x$N, 1), "%\n\n", sep ="")
 
   # create summary table
   p <- length(beta)
+  coefficients <- matrix(NA, p, 5)
+  rownames(coefficients) <- colnames(x$Z)
+  colnames(coefficients)=c("coef",  "exp(coef)" , "se(coef)", "z", "Pr(>|z|)")
+  ## fill in values
+  coefficients[, 1] <- beta
+  coefficients[, 2] <- exp(beta)
+  coefficients[, 3] <- se
+  coefficients[, 4] <- beta / se
+  coefficients[, 5] <- 2 * (1 - pnorm(abs(coefficients[, 4])))
+  # coefficients
+  # printCoefmat(coefficients, P.values = TRUE, has.Pvalue = TRUE, digits = 4,
+  #              cs.ind = c(1, 3), tst.ind = 4)
 
-  coefficients <- matrix(NA,J,4)
-
-
-  Dtab=matrix(NA,J,4)
-
-  # rownames(LRtab)=c(paste0("Ref (Group ",groups[1],")"),
-                    # paste0("Group ",groups[2:J]," vs ",ref))
-  # colnames(LRtab)=c("Estimate", "Std.Err", "Z value", "Pr(>|z|)")
-
-
+  ## exponentiated
+  exp_coef <- matrix(NA, p, 4)
+  rownames(exp_coef) <- rownames(coefficients)
+  colnames(exp_coef) <- c("exp(coef)", "exp(-coef)", "lower .95", "upper .95")
+  za <- qnorm(0.975)
+  ## fill in values
+  exp_coef[, 1] <- exp(beta)
+  exp_coef[, 2] <- 1 / exp_coef[, 1]
+  exp_coef[, 3] <- exp(beta - za * se)
+  exp_coef[, 4] <- exp(beta + za * se)
+  # exp_coef
+  ## wald test
+  wald <- as.numeric(t(beta) %*% solve(var) %*% beta)
+  wald_pval <- 1 - pchisq(wald, p)
+  # combine results
+  result <- list(coefficients = coefficients, exp_coef = exp_coef, wald = wald,
+                 wald_pval = wald_pval, p = p,
+                 beta = beta, var = var, n = x$n, N = x$N, Nwl = x$Nwl,
+                 Y = x$Y, Z = x$Z, l = x$l, call = x$call)
 
 
   class(result)<-"summary.wreg"
@@ -454,65 +473,35 @@ summary.wreg=function(x, ...){
 }
 
 
-
-
-
-#' Print method for summary.LRfit objects
+#' Print method for summary.wreg objects
 #'
-#' Produces a printed summary of the results for the while-alive loss rate
+#' Produces a printed summary of regression results for win ratio regression
 #'
-#' @param x An object returned by \code{\link{summary.LRfit}}.
+#' @param x An object returned by \code{\link{summary.wreg}}.
 #' @param ... Further arguments passed to or from other methods
 #' @return No return value, called for side effects.
 #' @export
 #' @importFrom stats printCoefmat
-print.summary.wreg=function(x,...){
+print.summary.wreg <- function(x,...){
 
   cat("Call:\n")
   print(x$call)
   cat("\n")
-  tau=x$tau
-  joint.test=x$joint.test
-  J<-x$J
-  # p-value for the (J-1)-d.f. test on loss rate
-  LRchisq=x$LRchisq
-  LRpval=x$LRpval
+  ## number of subjects
+  cat("n = ", x$n, " subjects with complete data\n", sep ="")
+  cat("Comparable (win/loss) pairs: ", x$Nwl, "/", x$N, " = ",
+      round(100 * x$Nwl / x$N, 1), "%\n\n", sep = "")
 
-  # table for loss rate
-  LRtab<-x$LRtab
-  cat("Analysis of log loss rate (LR) by tau = ",tau, ":\n",sep="")
-  printCoefmat(LRtab, P.values=TRUE, has.Pvalue=TRUE)
+  cat("Newton-Raphson algoritm converged in ", x$l, " iterations\n\n", sep = "")
+
+  printCoefmat(x$coefficients, P.values = TRUE, has.Pvalue = TRUE, digits = 4,
+                             cs.ind = c(1, 3), tst.ind = 4)
+  cat("\n")
+  printCoefmat(x$exp_coef)
   cat("\n")
 
-  cat("Test of group difference in while-alive LR\n")
-  cat("X-squared = ", LRchisq, ", df = ",J-1,", p = ",LRpval, sep="")
-
-  ## exponentiated table for loss rate ratio
-  za<-qnorm(0.975)
-  beta<-LRtab[2:J,1]
-  se<-LRtab[2:J,2]
-  LRR<-cbind(exp(beta),exp(beta-za*se),exp(beta+za*se))
-  colnames(LRR)<-c("LR ratio","95% lower CL","95% higher CL")
-  rownames(LRR)<-rownames(LRtab)[2:J]
-  cat("\n\n")
-  cat("Point and interval estimates for the LR ratio:\n")
-  print(LRR)
-  if (joint.test){
-    # table for RMST
-    Dtab<-x$Dtab
-    LRDchisq<-x$LRDchisq
-    LRDpval<-x$LRDpval
-    cat("\n\n")
-    cat("Analysis of log RMST (restricted mean survival time) by tau = ",tau, ":\n",sep="")
-    printCoefmat(Dtab, P.values=TRUE, has.Pvalue=TRUE)
-    cat("\n\n")
-    cat("Test of group difference in while-alive LR and RMST\n")
-    cat("X-squared = ", LRDchisq, ", df = ",2*(J-1),", p = ",LRDpval, sep="")
-
-  }
-
-
-
-
+  cat("Overall Wald test = ", round(x$wald, digits = 3), " on ",
+      x$p, " df,  p = ", x$wald_pval, sep = "")
 }
+
 

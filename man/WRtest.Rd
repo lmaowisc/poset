@@ -28,17 +28,18 @@ Estimate and make inference on win ratio (net benefit) comparing a treatment to 
 }
 \examples{
 head(liver)
-### data example
-## compare bivariate fibrosis ratings between fibrosis
-## stages >= 3 and < 3
-
+## compare bivariate ratings by fibrosis stage
+Y1 <- liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
+Y0 <- liver[!liver$AF, c("R1NASH", "R2NASH")] # not advanced
+obj <- wrtest(Y1, Y0)
+obj
 }
 \references{
 Mao, L. (2024). Win ratio for partially ordered data.
 \emph{Statistica Sinica}, Under revision.
 
  Buyse, M. (2010).  \href{https://doi.org/10.1002/sim.3923}{Generalized pairwise
- comparisons of prioritized outcomes in the two‐sample problem.}
+ comparisons of prioritized outcomes in the two-sample problem.}
  \emph{Statistics in Medicine}, 29, 3245-3257.
 }
 \seealso{

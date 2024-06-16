@@ -137,6 +137,6 @@ NR.MWR <- function(beta, delta, Zd, Z, W, ep = 1e-8) {
   Sigma <- 4 * invOmega %*% (psi.mat %*% t(psi.mat)) %*% invOmega / (n * (n - p))
 
 
-  return(list(beta = beta, Sigma = Sigma, err = err, l = l))
+  return(list(beta = as.vector(beta), Sigma = Sigma, err = err, l = l))
 }
 

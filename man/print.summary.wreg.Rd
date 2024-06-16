@@ -2,12 +2,12 @@
 % Please edit documentation in R/win_ratio_functions.R
 \name{print.summary.wreg}
 \alias{print.summary.wreg}
-\title{Print method for summary.LRfit objects}
+\title{Print method for summary.wreg objects}
 \usage{
 \method{print}{summary.wreg}(x, ...)
 }
 \arguments{
-\item{x}{An object returned by \code{\link{summary.LRfit}}.}
+\item{x}{An object returned by \code{\link{summary.wreg}}.}
 
 \item{...}{Further arguments passed to or from other methods}
 }
@@ -15,5 +15,5 @@
 No return value, called for side effects.
 }
 \description{
-Produces a printed summary of the results for the while-alive loss rate
+Produces a printed summary of regression results for win ratio regression
 }
