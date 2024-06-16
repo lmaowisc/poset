@@ -30,18 +30,60 @@ so that $Y_i\succ Y_j$ (or $Y_j\prec Y_i$) means a "win" for $Y_i$ and a "loss" 
 
 ### Two-group comparison
 Let $Z = 1, 0$ be a binary indicator for treatment and control groups, respectively.
-The probability of a treated winning against an untreated is
-$P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)$. Likewise, that of a treated winning against an untreated is
+The probability of a treated *winning* against an untreated is
+$P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)$. Likewise, that of a treated *losing* to an untreated is $P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)$. To summarize the relative favorability
+of treatment against control:
+\begin{align}\tag{1}
+\mbox{Win ratio: } \hspace{1ex}&  WR = \frac{P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)}{P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)}\\
+\mbox{Net benefit: } \hspace{1ex}&  NB = P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0) - 
+P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0).
+\end{align}
+
+Given $(Y_i, Z_i)$ $(i=1,\ldots, n)$, a random $n$-sample of $(Y, Z)$,
+standard two-sample $U$-statistics can be used to estimate the win and loss
+probabilities, which can replace the target quantities in (1)
+for nonparametric estimates of WR and NB. 
 
 ### Win ratio regression 
+If $Z$ is non-binary but rather a $p$-vector of possibly continuous components,
+the nonparametric approach no longer works. Instead, we posit a multiplicative
+win ratio model
+\begin{align}\tag{2}
+WR(Z_i, Z_j) := \frac{P(Y_i\succ Y_j\mid Z_i, Z_j)}{P(Y_i\prec Y_j\mid Z_i, Z_j)} 
+=\exp\{\beta^{\rm T}(Z_i - Z_j)\}.
+\end{align}
+This means that unit increases in the covariates lead to 
+win ratios $\exp(\beta)$ (component-wise).
+Standard estimators of $\exp(\beta)$ reduce to the two-sample win ratio
+when $Z = 1, 0$.
 
 ## Code and Example
-
+Load the package:
+```{r setup}
+library(poset)
+```
 ### Basic syntax
+
+For two-sample WR/NB,
+```{r, eval = FALSE}
+wrtest(Y1, Y0, fun = wprod)
+```
+where `Y1` and `Y0` are response matrices in the treatment and control,
+respectively, each with $K$ columns for the $K$ components.
+`fun` can be a user-defined function that takes on two $K$-vectors
+and that outputs $1$, $-1$, $0$ if the first wins, loses, or ties
+with the second, respectively. The default is a function for the consensus (product)
+order.
+
+For win ratio regression,
+```{r, eval = FALSE}
+obj <- wreg(Y, Z, fun = wprod)
+```
+where `Y` is an $n\times K$ response matrix and $Z$ is an
+$n\times p$  design (covariate) matrix. Again, the win function can
+be customized in `fun`. `summary(obj)` to print out summary results
+including regression tables.
 
 ### A data example
 
 
-```{r setup}
-library(poset)
-```
