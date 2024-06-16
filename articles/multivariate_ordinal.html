@@ -71,8 +71,9 @@
     
     
 <p>This vignette demonstrates the win ratio (or net benefit) approach to
-multivariate ordinal data, under consensus or prioritized order between
-components.</p>
+multivariate ordinal data<span class="citation">(Buyse 2010; Bebu and
+Lachin 2015; Mao 2024)</span>, under consensus or prioritized order
+between components.</p>
 <div class="section level2">
 <h2 id="data-and-methodology">Data and Methodology<a class="anchor" aria-label="anchor" href="#data-and-methodology"></a>
 </h2>
@@ -156,6 +157,150 @@ regression tables.</p>
 <div class="section level3">
 <h3 id="a-data-example">A data example<a class="anchor" aria-label="anchor" href="#a-data-example"></a>
 </h3>
+<p>A total of 186 patients with non-alcoholic fatty liver disease were
+recruited at the University of Wisconsin Hospitals in 2017. The patients
+underwent computed tomography scan of the liver for the presence of
+non-alcoholic steato-hepatitis, the most severe form of non-alcoholic
+fatty liver disease. The image was subsequently assessed by two
+radiologists using a scale of 1 to 5, with higher values indicating
+greater likelihood of disease. Predictors of rating scores include
+patient sex, the presence of advanced fibrosis (AF), and quantitative
+biomarkers such as percent of steatosis, i.e., liver fat content, liver
+mean gray level intensity, and liver surface nodularity (LSN) score.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">liver</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   R1NASH R2NASH Sex    AF Steatosis  SSF2  LSN</span></span>
+<span><span class="co">#&gt; 1      3      2   M FALSE        30  0.21 2.33</span></span>
+<span><span class="co">#&gt; 2      1      1   F FALSE         5  0.38 2.86</span></span>
+<span><span class="co">#&gt; 3      4      2   M FALSE        70  0.58 3.65</span></span>
+<span><span class="co">#&gt; 4      4      4   F  TRUE        30 -0.08 2.73</span></span>
+<span><span class="co">#&gt; 5      4      3   M  TRUE        70 -0.04 2.53</span></span>
+<span><span class="co">#&gt; 6      3      3   M FALSE        10  0.02 2.88</span></span></code></pre></div>
+<!-- First, some descriptive statistics by AF status. -->
+<!-- ```{r} -->
+<!-- library(gtsummary) -->
+<!-- liver |>  -->
+<!--     tbl_summary( -->
+<!--     include = c(Sex, Steatosis,  SSF2,  LSN, R1NASH, R2NASH), -->
+<!--     by = AF, # split table by sex -->
+<!--     type = starts_with("R") ~ "continuous", -->
+<!--     statistic = list( -->
+<!--       R1NASH ~ "{mean} ({sd})", -->
+<!--       R2NASH ~ "{mean} ({sd})" -->
+<!--     ), -->
+<!--     digits = starts_with("R") ~ 1, -->
+<!--     missing = "no"  -->
+<!--   ) |>  -->
+<!--   modify_caption("**Table 1. Patient Characteristics**") |>  -->
+<!--   bold_labels() -->
+<!-- ``` -->
+<!-- It appears that AF tends to have higher (worse) scores by both readers. To compare the two groups by win ratio/net benefit: -->
+<p>First, compare the bivariate scores between AF and non-AF by win
+ratio/net benefit:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># lower score is better</span></span>
+<span><span class="va">Y1</span> <span class="op">&lt;-</span> <span class="fl">5</span> <span class="op">-</span> <span class="va">liver</span><span class="op">[</span><span class="va">liver</span><span class="op">$</span><span class="va">AF</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1NASH"</span>, <span class="st">"R2NASH"</span><span class="op">)</span><span class="op">]</span> <span class="co"># advanced</span></span>
+<span><span class="va">Y0</span> <span class="op">&lt;-</span> <span class="fl">5</span> <span class="op">-</span> <span class="va">liver</span><span class="op">[</span><span class="op">!</span><span class="va">liver</span><span class="op">$</span><span class="va">AF</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1NASH"</span>, <span class="st">"R2NASH"</span><span class="op">)</span><span class="op">]</span> <span class="co"># not advanced</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WRtest.html">wrtest</a></span><span class="op">(</span><span class="va">Y1</span>, <span class="va">Y0</span><span class="op">)</span></span>
+<span><span class="va">obj</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; wrtest(Y1 = Y1, Y0 = Y0)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Two-sample (Y1 vs Y0) win ratio/net benefit analysis</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of pairs: N1 x N0 =  69 x 116  =  8004 </span></span>
+<span><span class="co">#&gt;   Win: 2392 (29.9%)</span></span>
+<span><span class="co">#&gt;   Loss: 4251 (53.1%)</span></span>
+<span><span class="co">#&gt;   Tie: 1361 (17%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Win ratio (95% CI): 0.56 (0.37, 0.86), p-value = 0.00856547</span></span>
+<span><span class="co">#&gt; Net benefit (95% CI): -0.232 (-0.4, -0.065), p-value = 0.006577537</span></span></code></pre></div>
+<p>This shows, in particular, that AF is <span class="math inline">\(1-0.56=44\%\)</span> less likely than non-AF to
+have favorable scores by consensus of the two readers.</p>
+<p>To regress the scores against other covariates,</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">5</span> <span class="op">-</span> <span class="va">liver</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1NASH"</span>, <span class="st">"R2NASH"</span><span class="op">)</span><span class="op">]</span> <span class="co"># lower score is better</span></span>
+<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="st">"Female"</span> <span class="op">=</span> <span class="va">liver</span><span class="op">$</span><span class="va">Sex</span> <span class="op">==</span> <span class="st">"F"</span>,</span>
+<span>           <span class="va">liver</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AF"</span>, <span class="st">"Steatosis"</span>,   <span class="st">"SSF2"</span>,  <span class="st">"LSN"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="co"># covariates</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wreg.html">wreg</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Z</span><span class="op">)</span> <span class="co"># fit model</span></span>
+<span><span class="va">obj</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; wreg(Y = Y, Z = Z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; n = 154 subjects with complete data</span></span>
+<span><span class="co">#&gt; Comparable (win/loss) pairs: 9548/11781 = 81%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    Female         AF   Steatosis         SSF2        LSN</span></span>
+<span><span class="co">#&gt;  -0.18956 -0.9660827 -0.02779146 -0.007926333 -0.1029914</span></span></code></pre></div>
+<p>Some basic information of the model is printed, like the number and
+percentage of comparable pairs used in the regression, as well as the
+regression coefficients (log-WR).</p>
+<p>For more detailed inference results:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; wreg(Y = Y, Z = Z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; n = 154 subjects with complete data</span></span>
+<span><span class="co">#&gt; Comparable (win/loss) pairs: 9548/11781 = 81%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Newton-Raphson algoritm converged in 7 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                coef exp(coef)  se(coef)      z Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; Female    -0.189560    0.8273  0.259988 -0.729 0.465934    </span></span>
+<span><span class="co">#&gt; AF        -0.966083    0.3806  0.280313 -3.446 0.000568 ***</span></span>
+<span><span class="co">#&gt; Steatosis -0.027791    0.9726  0.005281 -5.262 1.42e-07 ***</span></span>
+<span><span class="co">#&gt; SSF2      -0.007926    0.9921  0.003953 -2.005 0.044953 *  </span></span>
+<span><span class="co">#&gt; LSN       -0.102991    0.9021  0.125718 -0.819 0.412657    </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           exp(coef) exp(-coef) lower .95 upper .95</span></span>
+<span><span class="co">#&gt; Female      0.82732    1.20872   0.49702    1.3771</span></span>
+<span><span class="co">#&gt; AF          0.38057    2.62763   0.21970    0.6592</span></span>
+<span><span class="co">#&gt; Steatosis   0.97259    1.02818   0.96258    0.9827</span></span>
+<span><span class="co">#&gt; SSF2        0.99210    1.00796   0.98445    0.9998</span></span>
+<span><span class="co">#&gt; LSN         0.90213    1.10848   0.70512    1.1542</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Overall Wald test = 79.129 on 5 df,  p = 1.221245e-15</span></span></code></pre></div>
+<p>Advanced fibrosis status and percent of steatosis are strongly and
+significantly associated with the likelihood of non-alcoholic
+steato-hepatitis. In particular, AF is <span class="math inline">\(38.1\%\)</span> times as likely to have favorable
+reader assessments as non-AF. Furthermore, one percentage point increase
+in steatosis results in <span class="math inline">\(1-97259\doteq
+2.7\%\)</span> reduction in the likelihood of favorable assessments.</p>
+</div>
+<div class="section level3">
+<h3 id="exercise">Exercise<a class="anchor" aria-label="anchor" href="#exercise"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Confirm that <code><a href="../reference/wreg.html">wreg()</a></code> with <code>AF</code> as the only
+covariate in <code>Z</code> produces the same results as in
+<code>wrtest</code>.</li>
+<li>Try a different win function, e.g., one that prioritizes the score
+of reader 1, through `fun` and compare the results with those under the
+consensus order.</li>
+</ol>
+</div>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-bebu2015" class="csl-entry">
+Bebu, Ionut, and John M. Lachin. 2015. <span>“Large Sample Inference for
+a Win Ratio Analysis of a Composite Outcome Based on Prioritized
+Components.”</span> <em>Biostatistics</em> 17 (1): 178–87. <a href="https://doi.org/10.1093/biostatistics/kxv032" class="external-link">https://doi.org/10.1093/biostatistics/kxv032</a>.
+</div>
+<div id="ref-buyse2010" class="csl-entry">
+Buyse, Marc. 2010. <span>“Generalized Pairwise Comparisons of
+Prioritized Outcomes in the Two<span>-</span>Sample Problem.”</span>
+<em>Statistics in Medicine</em> 29 (30): 3245–57. <a href="https://doi.org/10.1002/sim.3923" class="external-link">https://doi.org/10.1002/sim.3923</a>.
+</div>
+<div id="ref-mao2024" class="csl-entry">
+Mao, Lu. 2024. <span>“Win Ratio for Partially Ordered Data,”</span>
+Under revision.
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

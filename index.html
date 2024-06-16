@@ -57,37 +57,109 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="poset">poset<a class="anchor" aria-label="anchor" href="#poset"></a>
+<div class="page-header"><h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1></div>
-<p>The goal of poset is to …</p>
+<p>The <strong>poset</strong> package implements simple and efficient statistical procedures for partially ordered data, like multivariate ordinal response under consensus or prioritized order. The current version focuses on the win ratio/net benefit approach (Mao 2024).</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of poset like so:</p>
+<p>Install <strong>poset</strong> from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"poset"</span><span class="op">)</span></span></code></pre></div>
+<p>You can install the development version from GitHub with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"lmaowisc/poset"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sites.google.com/view/lmaowisc/" class="external-link">poset</a></span><span class="op">)</span></span>
-<span><span class="co">## basic example code</span></span></code></pre></div>
-<p>What is special about using <code>README.Rmd</code> instead of just <code>README.md</code>? You can include R chunks like so:</p>
+<p>Here is a basic example for two-sample testing and regressio .</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      speed           dist       </span></span>
-<span><span class="co">#&gt;  Min.   : 4.0   Min.   :  2.00  </span></span>
-<span><span class="co">#&gt;  1st Qu.:12.0   1st Qu.: 26.00  </span></span>
-<span><span class="co">#&gt;  Median :15.0   Median : 36.00  </span></span>
-<span><span class="co">#&gt;  Mean   :15.4   Mean   : 42.98  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  </span></span>
-<span><span class="co">#&gt;  Max.   :25.0   Max.   :120.00</span></span></code></pre></div>
-<p>You’ll still need to render <code>README.Rmd</code> regularly, to keep <code>README.md</code> up-to-date. <code>devtools::build_readme()</code> is handy for this. You could also use GitHub Actions to re-render <code>README.Rmd</code> every time you push. An example workflow can be found here: <a href="https://github.com/r-lib/actions/tree/v1/examples" class="external-link uri">https://github.com/r-lib/actions/tree/v1/examples</a>.</p>
-<p>You can also embed plots, for example:</p>
-<p><img src="reference/figures/README-pressure-1.png" width="100%"></p>
-<p>In that case, don’t forget to commit and push the resulting figure files, so they display on GitHub and CRAN.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sites.google.com/view/lmaowisc/" class="external-link">poset</a></span><span class="op">)</span></span>
+<span><span class="co">## data example</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">liver</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   R1NASH R2NASH Sex    AF Steatosis  SSF2  LSN</span></span>
+<span><span class="co">#&gt; 1      3      2   M FALSE        30  0.21 2.33</span></span>
+<span><span class="co">#&gt; 2      1      1   F FALSE         5  0.38 2.86</span></span>
+<span><span class="co">#&gt; 3      4      2   M FALSE        70  0.58 3.65</span></span>
+<span><span class="co">#&gt; 4      4      4   F  TRUE        30 -0.08 2.73</span></span>
+<span><span class="co">#&gt; 5      4      3   M  TRUE        70 -0.04 2.53</span></span>
+<span><span class="co">#&gt; 6      3      3   M FALSE        10  0.02 2.88</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="compare-bivariate-ratings-by-fibrosis-stage">Compare bivariate ratings by fibrosis stage<a class="anchor" aria-label="anchor" href="#compare-bivariate-ratings-by-fibrosis-stage"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Y1</span> <span class="op">&lt;-</span> <span class="va">liver</span><span class="op">[</span><span class="va">liver</span><span class="op">$</span><span class="va">AF</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1NASH"</span>, <span class="st">"R2NASH"</span><span class="op">)</span><span class="op">]</span> <span class="co"># advanced</span></span>
+<span><span class="va">Y0</span> <span class="op">&lt;-</span> <span class="va">liver</span><span class="op">[</span><span class="op">!</span><span class="va">liver</span><span class="op">$</span><span class="va">AF</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1NASH"</span>, <span class="st">"R2NASH"</span><span class="op">)</span><span class="op">]</span> <span class="co"># not advanced</span></span>
+<span><span class="fu"><a href="reference/WRtest.html">wrtest</a></span><span class="op">(</span><span class="va">Y1</span>, <span class="va">Y0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; wrtest(Y1 = Y1, Y0 = Y0)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Two-sample (Y1 vs Y0) win ratio/net benefit analysis</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of pairs: N1 x N0 =  69 x 116  =  8004 </span></span>
+<span><span class="co">#&gt;   Win: 4251 (53.1%)</span></span>
+<span><span class="co">#&gt;   Loss: 2392 (29.9%)</span></span>
+<span><span class="co">#&gt;   Tie: 1361 (17%)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Win ratio (95% CI): 1.78 (1.16, 2.73), p-value = 0.00856547</span></span>
+<span><span class="co">#&gt; Net benefit (95% CI): 0.232 (0.065, 0.4), p-value = 0.006577537</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="regression-analysis">Regression analysis<a class="anchor" aria-label="anchor" href="#regression-analysis"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">5</span> <span class="op">-</span> <span class="va">liver</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R1NASH"</span>, <span class="st">"R2NASH"</span><span class="op">)</span><span class="op">]</span> <span class="co"># lower score is better</span></span>
+<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="st">"Female"</span> <span class="op">=</span> <span class="va">liver</span><span class="op">$</span><span class="va">Sex</span> <span class="op">==</span> <span class="st">"F"</span>,</span>
+<span>           <span class="va">liver</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AF"</span>, <span class="st">"Steatosis"</span>,   <span class="st">"SSF2"</span>,  <span class="st">"LSN"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="co"># covariates</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/wreg.html">wreg</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Z</span><span class="op">)</span> <span class="co"># fit model</span></span>
+<span><span class="va">obj</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; wreg(Y = Y, Z = Z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; n = 154 subjects with complete data</span></span>
+<span><span class="co">#&gt; Comparable (win/loss) pairs: 9548/11781 = 81%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    Female         AF   Steatosis         SSF2        LSN</span></span>
+<span><span class="co">#&gt;  -0.18956 -0.9660827 -0.02779146 -0.007926333 -0.1029914</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; wreg(Y = Y, Z = Z)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; n = 154 subjects with complete data</span></span>
+<span><span class="co">#&gt; Comparable (win/loss) pairs: 9548/11781 = 81%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Newton-Raphson algoritm converged in 7 iterations</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                coef exp(coef)  se(coef)      z Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; Female    -0.189560    0.8273  0.259988 -0.729 0.465934    </span></span>
+<span><span class="co">#&gt; AF        -0.966083    0.3806  0.280313 -3.446 0.000568 ***</span></span>
+<span><span class="co">#&gt; Steatosis -0.027791    0.9726  0.005281 -5.262 1.42e-07 ***</span></span>
+<span><span class="co">#&gt; SSF2      -0.007926    0.9921  0.003953 -2.005 0.044953 *  </span></span>
+<span><span class="co">#&gt; LSN       -0.102991    0.9021  0.125718 -0.819 0.412657    </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           exp(coef) exp(-coef) lower .95 upper .95</span></span>
+<span><span class="co">#&gt; Female      0.82732    1.20872   0.49702    1.3771</span></span>
+<span><span class="co">#&gt; AF          0.38057    2.62763   0.21970    0.6592</span></span>
+<span><span class="co">#&gt; Steatosis   0.97259    1.02818   0.96258    0.9827</span></span>
+<span><span class="co">#&gt; SSF2        0.99210    1.00796   0.98445    0.9998</span></span>
+<span><span class="co">#&gt; LSN         0.90213    1.10848   0.70512    1.1542</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Overall Wald test = 79.129 on 5 df,  p = 1.221245e-15</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-mao2024" class="csl-entry">
+Mao, Lu. 2024. “Win Ratio for Partially Ordered Data,” Under revision.
+</div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
