@@ -1,50 +1,121 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# poset
+# Introduction
 
-The goal of poset is to …
+The **poset** package implements simple and efficient statistical
+procedures for partially ordered data, like multivariate ordinal
+response under consensus or prioritized order. The current version
+focuses on the win ratio/net benefit approach (Mao 2024).
 
 ## Installation
 
-You can install the development version of poset like so:
+Install **poset** from CRAN with:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+install.packages("poset")
 ```
 
-## Example
+You can install the development version from GitHub with:
 
-This is a basic example which shows you how to solve a common problem:
+``` r
+# install.packages("devtools")
+devtools::install_github("lmaowisc/poset")
+```
+
+## Examples
+
+Here is a basic example for two-sample testing and regressio .
 
 ``` r
 library(poset)
-## basic example code
+## data example
+head(liver)
+#>   R1NASH R2NASH Sex    AF Steatosis  SSF2  LSN
+#> 1      3      2   M FALSE        30  0.21 2.33
+#> 2      1      1   F FALSE         5  0.38 2.86
+#> 3      4      2   M FALSE        70  0.58 3.65
+#> 4      4      4   F  TRUE        30 -0.08 2.73
+#> 5      4      3   M  TRUE        70 -0.04 2.53
+#> 6      3      3   M FALSE        10  0.02 2.88
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+### Compare bivariate ratings by fibrosis stage
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+Y1 <- liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
+Y0 <- liver[!liver$AF, c("R1NASH", "R2NASH")] # not advanced
+wrtest(Y1, Y0)
+#> Call:
+#> wrtest(Y1 = Y1, Y0 = Y0)
+#> 
+#> Two-sample (Y1 vs Y0) win ratio/net benefit analysis
+#> 
+#> Number of pairs: N1 x N0 =  69 x 116  =  8004 
+#>   Win: 4251 (53.1%)
+#>   Loss: 2392 (29.9%)
+#>   Tie: 1361 (17%)
+#> 
+#> Win ratio (95% CI): 1.8 (1.2, 2.7), p-value = 0.00856547
+#> Net benefit (95% CI): 0.232 (0.065, 0.4), p-value = 0.006577537
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+### Regression analysis
 
-You can also embed plots, for example:
+``` r
+Y <- 5 - liver[, c("R1NASH", "R2NASH")] # lower score is better
+Z <- cbind("Female" = liver$Sex == "F",
+           liver[, c("AF", "Steatosis",   "SSF2",  "LSN")]) # covariates
+obj <- wreg(Y, Z) # fit model
+obj
+#> Call:
+#> wreg(Y = Y, Z = Z)
+#> 
+#> n = 154 subjects with complete data
+#> Comparable (win/loss) pairs: 9548/11781 = 81%
+#> 
+#>    Female         AF   Steatosis         SSF2        LSN
+#>  -0.18956 -0.9660827 -0.02779146 -0.007926333 -0.1029914
+```
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+``` r
+summary(obj)
+#> Call:
+#> wreg(Y = Y, Z = Z)
+#> 
+#> n = 154 subjects with complete data
+#> Comparable (win/loss) pairs: 9548/11781 = 81%
+#> 
+#> Newton-Raphson algoritm converged in 7 iterations
+#> 
+#>                coef exp(coef)  se(coef)      z Pr(>|z|)    
+#> Female    -0.189560    0.8273  0.259988 -0.729 0.465934    
+#> AF        -0.966083    0.3806  0.280313 -3.446 0.000568 ***
+#> Steatosis -0.027791    0.9726  0.005281 -5.262 1.42e-07 ***
+#> SSF2      -0.007926    0.9921  0.003953 -2.005 0.044953 *  
+#> LSN       -0.102991    0.9021  0.125718 -0.819 0.412657    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#>           exp(coef) exp(-coef) lower .95 upper .95
+#> Female      0.82732    1.20872   0.49702    1.3771
+#> AF          0.38057    2.62763   0.21970    0.6592
+#> Steatosis   0.97259    1.02818   0.96258    0.9827
+#> SSF2        0.99210    1.00796   0.98445    0.9998
+#> LSN         0.90213    1.10848   0.70512    1.1542
+#> 
+#> Overall Wald test = 79.129 on 5 df,  p = 1.221245e-15
+```
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+## References
+
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
+
+<div id="ref-mao2024" class="csl-entry">
+
+Mao, Lu. 2024. “Win Ratio for Partially Ordered Data,” Under revision.
+
+</div>
+
+</div>

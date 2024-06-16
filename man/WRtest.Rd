@@ -29,6 +29,7 @@ Estimate and make inference on win ratio (net benefit) comparing a treatment to 
 \examples{
 head(liver)
 ## compare bivariate ratings by fibrosis stage
+## lower score is better
 Y1 <- liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
 Y0 <- liver[!liver$AF, c("R1NASH", "R2NASH")] # not advanced
 obj <- wrtest(Y1, Y0)

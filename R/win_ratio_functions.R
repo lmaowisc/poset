@@ -35,6 +35,7 @@
 #' @examples
 #' head(liver)
 #' ## compare bivariate ratings by fibrosis stage
+#' ## lower score is better
 #' Y1 <- liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
 #' Y0 <- liver[!liver$AF, c("R1NASH", "R2NASH")] # not advanced
 #' obj <- wrtest(Y1, Y0)
@@ -110,7 +111,7 @@ wrtest <- function(Y1, Y0, fun = wprod) {
 #' Print results from \code{wrtest}
 #'
 #' @description Print the results for two-sample win ratio (net benefit) analysis,
-#' include point estimates, 95\% confidence intervals, and p-values.
+#' including point estimates, 95\% confidence intervals, and p-values.
 #'
 #' @param x An object returned by \code{\link{wrtest}}.
 #' @param ... Further arguments passed to or from other methods
@@ -144,9 +145,9 @@ print.wrtest=function(x,...){
   nb_se <- x$nb_se
   nb_pval <- x$nb_pval
   za <- qnorm(0.975)
-  cat("Win ratio (95% CI): ", round(exp(lgwr), 1), " (",
-      round(exp(lgwr - za * lgwr_se), 1), ", ",
-      round(exp(lgwr + za * lgwr_se), 1), "), p-value = ",
+  cat("Win ratio (95% CI): ", round(exp(lgwr), 2), " (",
+      round(exp(lgwr - za * lgwr_se), 2), ", ",
+      round(exp(lgwr + za * lgwr_se), 2), "), p-value = ",
       lgwr_pval, "\n", sep = "")
   cat("Net benefit (95% CI): ", round(nb, 3), " (",
       round(nb - za * nb_se, 3), ", ",

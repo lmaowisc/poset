@@ -3,9 +3,10 @@ title: "Multivariate ordinal response"
 # author: Lu Mao (lmao@biostat.wisc.edu)
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{poset_WR}
+  %\VignetteIndexEntry{Multivariate ordinal response}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -15,75 +16,119 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette demonstrates the win ratio (or net benefit) approach to multivariate ordinal data, under consensus or prioritized order between components.
+This vignette demonstrates the win ratio (or net benefit) approach to multivariate ordinal data[@buyse2010; @bebu2015; @mao2024], under consensus or prioritized order between components.
 
 ## Data and Methodology
 
-Let $Y = (y_1,\ldots, y_K)$ be a $K$-vector of ordinal responses, where without loss of generality we denote $y_k =0,1,\ldots, m_k -1$ 
-These may be rating scores provided by different readers on the same subject's medical
-image. The vector-valued response can be partially ordered by component-wise consensus, 
-that is, we say $Y_i\prec Y_j$ if $Y_i\leq Y_j$ component-wise, with strict inequality
-for at least one component. Alternatively, if some reader, say the first one, is more experienced than the rest, their score can be prioritized. Then we say 
-$Y_i\prec Y_j$ if $y_{1i} < y_{1j}$, or $y_{1i} = y_{1j}$ and a consensus order
-holds on the other components. In either case, we assume that a higher score is better,
-so that $Y_i\succ Y_j$ (or $Y_j\prec Y_i$) means a "win" for $Y_i$ and a "loss" for $Y_j$.
+Let $Y = (y_1,\ldots, y_K)$ be a $K$-vector of ordinal responses, where without loss of generality we denote $y_k =0,1,\ldots, m_k -1$ These may be rating scores provided by different readers on the same subject's medical image. The vector-valued response can be partially ordered by component-wise consensus, that is, we say $Y_i\prec Y_j$ if $Y_i\leq Y_j$ component-wise, with strict inequality for at least one component. Alternatively, if some reader, say the first one, is more experienced than the rest, their score can be prioritized. Then we say $Y_i\prec Y_j$ if $y_{1i} < y_{1j}$, or $y_{1i} = y_{1j}$ and a consensus order holds on the other components. In either case, we assume that a higher score is better, so that $Y_i\succ Y_j$ (or $Y_j\prec Y_i$) means a "win" for $Y_i$ and a "loss" for $Y_j$.
 
 ### Two-group comparison
-Let $Z = 1, 0$ be a binary indicator for treatment and control groups, respectively.
-The probability of a treated *winning* against an untreated is
-$P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)$. Likewise, that of a treated *losing* to an untreated is $P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)$. To summarize the relative favorability
-of treatment against control:
-\begin{align}\tag{1}
+
+Let $Z = 1, 0$ be a binary indicator for treatment and control groups, respectively. The probability of a treated *winning* against an untreated is $P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)$. Likewise, that of a treated *losing* to an untreated is $P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)$. To summarize the relative favorability of treatment against control: \begin{align}\tag{1}
 \mbox{Win ratio: } \hspace{1ex}&  WR = \frac{P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0)}{P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0)}\\
 \mbox{Net benefit: } \hspace{1ex}&  NB = P(Y_i\succ Y_j\mid Z_i = 1, Z_j = 0) - 
 P(Y_i\prec Y_j\mid Z_i = 1, Z_j = 0).
 \end{align}
 
-Given $(Y_i, Z_i)$ $(i=1,\ldots, n)$, a random $n$-sample of $(Y, Z)$,
-standard two-sample $U$-statistics can be used to estimate the win and loss
-probabilities, which can replace the target quantities in (1)
-for nonparametric estimates of WR and NB. 
+Given $(Y_i, Z_i)$ $(i=1,\ldots, n)$, a random $n$-sample of $(Y, Z)$, standard two-sample $U$-statistics can be used to estimate the win and loss probabilities, which can replace the target quantities in (1) for nonparametric estimates of WR and NB.
 
-### Win ratio regression 
-If $Z$ is non-binary but rather a $p$-vector of possibly continuous components,
-the nonparametric approach no longer works. Instead, we posit a multiplicative
-win ratio model
-\begin{align}\tag{2}
+### Win ratio regression
+
+If $Z$ is non-binary but rather a $p$-vector of possibly continuous components, the nonparametric approach no longer works. Instead, we posit a multiplicative win ratio model \begin{align}\tag{2}
 WR(Z_i, Z_j) := \frac{P(Y_i\succ Y_j\mid Z_i, Z_j)}{P(Y_i\prec Y_j\mid Z_i, Z_j)} 
 =\exp\{\beta^{\rm T}(Z_i - Z_j)\}.
-\end{align}
-This means that unit increases in the covariates lead to 
-win ratios $\exp(\beta)$ (component-wise).
-Standard estimators of $\exp(\beta)$ reduce to the two-sample win ratio
-when $Z = 1, 0$.
+\end{align} This means that unit increases in the covariates lead to win ratios $\exp(\beta)$ (component-wise). Standard estimators of $\exp(\beta)$ reduce to the two-sample win ratio when $Z = 1, 0$.
 
 ## Code and Example
+
 Load the package:
+
 ```{r setup}
 library(poset)
 ```
+
 ### Basic syntax
 
 For two-sample WR/NB,
+
 ```{r, eval = FALSE}
 wrtest(Y1, Y0, fun = wprod)
 ```
-where `Y1` and `Y0` are response matrices in the treatment and control,
-respectively, each with $K$ columns for the $K$ components.
-`fun` can be a user-defined function that takes on two $K$-vectors
-and that outputs $1$, $-1$, $0$ if the first wins, loses, or ties
-with the second, respectively. The default is a function for the consensus (product)
-order.
+
+where `Y1` and `Y0` are response matrices in the treatment and control, respectively, each with $K$ columns for the $K$ components. `fun` can be a user-defined function that takes on two $K$-vectors and that outputs $1$, $-1$, $0$ if the first wins, loses, or ties with the second, respectively. The default is a function for the consensus (product) order.
 
 For win ratio regression,
+
 ```{r, eval = FALSE}
 obj <- wreg(Y, Z, fun = wprod)
 ```
-where `Y` is an $n\times K$ response matrix and $Z$ is an
-$n\times p$  design (covariate) matrix. Again, the win function can
-be customized in `fun`. `summary(obj)` to print out summary results
-including regression tables.
+
+where `Y` is an $n\times K$ response matrix and $Z$ is an $n\times p$ design (covariate) matrix. Again, the win function can be customized in `fun`. `summary(obj)` to print out summary results including regression tables.
 
 ### A data example
 
+A total of 186 patients with non-alcoholic fatty liver disease were recruited at the University of Wisconsin Hospitals in 2017. The patients underwent computed tomography scan of the liver for the presence of non-alcoholic steato-hepatitis, the most severe form of non-alcoholic fatty liver disease. The image was subsequently assessed by two radiologists using a scale of 1 to 5, with higher values indicating greater likelihood of disease. Predictors of rating scores include patient sex, the presence of advanced fibrosis (AF), and quantitative biomarkers such as percent of steatosis, i.e., liver fat content, liver mean gray level intensity, and liver surface nodularity (LSN) score.
 
+```{r}
+head(liver)
+```
+
+First, some descriptive statistics by AF status.
+
+```{r}
+library(gtsummary)
+
+liver |> 
+    tbl_summary(
+    include = c(Sex, Steatosis,  SSF2,  LSN, R1NASH, R2NASH),
+    by = AF, # split table by sex
+    type = starts_with("R") ~ "continuous",
+    statistic = list(
+      R1NASH ~ "{mean} ({sd})",
+      R2NASH ~ "{mean} ({sd})"
+    ),
+    digits = starts_with("R") ~ 1,
+    missing = "no" 
+  ) |> 
+  modify_caption("**Table 1. Patient Characteristics**") |> 
+  bold_labels()
+```
+
+It appears that AF tends to have higher (worse) scores by both readers. To compare the two groups by win ratio/net benefit:
+
+```{r}
+# lower score is better
+Y1 <- 5 - liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
+Y0 <- 5 - liver[!liver$AF, c("R1NASH", "R2NASH")] # not advanced
+obj <- wrtest(Y1, Y0)
+obj
+```
+
+This shows, in particular, that AF is $1-0.6=40.0\%$ less likely than non-AF to have a favorable score by consensus of the two readers.
+
+To regress the scores against other covariates:
+
+```{r}
+Y <- 5 - liver[, c("R1NASH", "R2NASH")] # lower score is better
+Z <- cbind("Female" = liver$Sex == "F",
+           liver[, c("AF", "Steatosis",   "SSF2",  "LSN")]) # covariates
+obj <- wreg(Y, Z) # fit model
+obj
+```
+
+Some basic information of the model is printed, like the number and percentage of comparable pairs used in the regression, as well as the regression coefficients (log-WR).
+
+For more detailed inference results:
+
+```{r}
+summary(obj)
+```
+
+Advanced fibrosis status and percent of steatosis are strongly and significantly associated with the likelihood of non-alcoholic steato-hepatitis. In particular, AF is $38.1\%$ times as likely to have favorable reader assessments as non-AF. Furthermore, one percent increase in steatosis results in $1-97259\doteq 2.7\%$ reduction in the likelihood of favorable assessments.
+
+### Exercise
+
+1.  Confirm that `wreg()` with `AF` as the only covariate in `Z` produces the same results as in `wrtest`.
+2.  Try a different win function, e.g., one that prioritizes the score of reader 1, through \`fun\` and compare the results with those under the consensus order.
+
+## References

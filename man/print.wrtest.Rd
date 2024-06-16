@@ -16,7 +16,7 @@ No return value, called for side effects.
 }
 \description{
 Print the results for two-sample win ratio (net benefit) analysis,
-include point estimates, 95\% confidence intervals, and p-values.
+including point estimates, 95\% confidence intervals, and p-values.
 }
 \seealso{
 \code{\link{wrtest}}.
