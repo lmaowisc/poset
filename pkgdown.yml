@@ -3,7 +3,7 @@ pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   multivariate_ordinal: multivariate_ordinal.html
-last_built: 2024-06-16T13:53Z
+last_built: 2024-06-16T13:55Z
 urls:
   reference: https://lmaowisc.github.io/poset/reference
   article: https://lmaowisc.github.io/poset/articles
