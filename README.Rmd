@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
+# poset
 
 The **poset** package implements simple and efficient statistical procedures for partially ordered data, like multivariate ordinal response under consensus or prioritized order.
 The current version focuses on the win ratio/net benefit approach [@mao2024].

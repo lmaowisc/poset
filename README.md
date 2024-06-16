@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Introduction
+# poset
 
 The **poset** package implements simple and efficient statistical
 procedures for partially ordered data, like multivariate ordinal
