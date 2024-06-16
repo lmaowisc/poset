@@ -73,29 +73,30 @@ A total of 186 patients with non-alcoholic fatty liver disease were recruited at
 head(liver)
 ```
 
-First, some descriptive statistics by AF status.
+<!-- First, some descriptive statistics by AF status. -->
 
-```{r}
-library(gtsummary)
+<!-- ```{r} -->
+<!-- library(gtsummary) -->
 
-liver |> 
-    tbl_summary(
-    include = c(Sex, Steatosis,  SSF2,  LSN, R1NASH, R2NASH),
-    by = AF, # split table by sex
-    type = starts_with("R") ~ "continuous",
-    statistic = list(
-      R1NASH ~ "{mean} ({sd})",
-      R2NASH ~ "{mean} ({sd})"
-    ),
-    digits = starts_with("R") ~ 1,
-    missing = "no" 
-  ) |> 
-  modify_caption("**Table 1. Patient Characteristics**") |> 
-  bold_labels()
-```
+<!-- liver |>  -->
+<!--     tbl_summary( -->
+<!--     include = c(Sex, Steatosis,  SSF2,  LSN, R1NASH, R2NASH), -->
+<!--     by = AF, # split table by sex -->
+<!--     type = starts_with("R") ~ "continuous", -->
+<!--     statistic = list( -->
+<!--       R1NASH ~ "{mean} ({sd})", -->
+<!--       R2NASH ~ "{mean} ({sd})" -->
+<!--     ), -->
+<!--     digits = starts_with("R") ~ 1, -->
+<!--     missing = "no"  -->
+<!--   ) |>  -->
+<!--   modify_caption("**Table 1. Patient Characteristics**") |>  -->
+<!--   bold_labels() -->
+<!-- ``` -->
 
-It appears that AF tends to have higher (worse) scores by both readers. To compare the two groups by win ratio/net benefit:
+<!-- It appears that AF tends to have higher (worse) scores by both readers. To compare the two groups by win ratio/net benefit: -->
 
+First, compare the bivariate scores between AF and non-AF by win ratio/net benefit:
 ```{r}
 # lower score is better
 Y1 <- 5 - liver[liver$AF, c("R1NASH", "R2NASH")] # advanced
@@ -104,10 +105,9 @@ obj <- wrtest(Y1, Y0)
 obj
 ```
 
-This shows, in particular, that AF is $1-0.6=40.0\%$ less likely than non-AF to have a favorable score by consensus of the two readers.
+This shows, in particular, that AF is $1-0.56=44\%$ less likely than non-AF to have  favorable scores by consensus of the two readers.
 
-To regress the scores against other covariates:
-
+To regress the scores against other covariates,
 ```{r}
 Y <- 5 - liver[, c("R1NASH", "R2NASH")] # lower score is better
 Z <- cbind("Female" = liver$Sex == "F",
@@ -124,7 +124,7 @@ For more detailed inference results:
 summary(obj)
 ```
 
-Advanced fibrosis status and percent of steatosis are strongly and significantly associated with the likelihood of non-alcoholic steato-hepatitis. In particular, AF is $38.1\%$ times as likely to have favorable reader assessments as non-AF. Furthermore, one percent increase in steatosis results in $1-97259\doteq 2.7\%$ reduction in the likelihood of favorable assessments.
+Advanced fibrosis status and percent of steatosis are strongly and significantly associated with the likelihood of non-alcoholic steato-hepatitis. In particular, AF is $38.1\%$ times as likely to have favorable reader assessments as non-AF. Furthermore, one percentage point increase in steatosis results in $1-97259\doteq 2.7\%$ reduction in the likelihood of favorable assessments.
 
 ### Exercise
 
