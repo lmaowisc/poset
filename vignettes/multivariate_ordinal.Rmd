@@ -129,6 +129,6 @@ Advanced fibrosis status and percent of steatosis are strongly and significantly
 ### Exercise
 
 1.  Confirm that `wreg()` with `AF` as the only covariate in `Z` produces the same results as in `wrtest`.
-2.  Try a different win function, e.g., one that prioritizes the score of reader 1, through \`fun\` and compare the results with those under the consensus order.
+2.  Try a different win function, e.g., one that prioritizes the score of reader 1, through `fun` and compare the results with those under the consensus order.
 
 ## References
