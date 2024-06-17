@@ -16,4 +16,8 @@ Useful links:
 }
 
 }
+\author{
+\strong{Maintainer}: Lu Mao \email{lmao@biostat.wisc.edu} (\href{https://orcid.org/0000-0002-8626-9822}{ORCID})
+
+}
 \keyword{internal}

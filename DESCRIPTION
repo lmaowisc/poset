@@ -2,8 +2,9 @@ Type: Package
 Package: poset
 Title: Analysis of Partially Ordered Data
 Version: 1.0.0
-Author: Lu Mao
-Maintainer: Lu Mao <lmao@biostat.wisc.edu>
+Authors@R: 
+    person("Lu", "Mao", , "lmao@biostat.wisc.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8626-9822"))
 Description: Win ratio approach to partially ordered data, such as multivariate ordinal 
   responses under product (consensus) or prioritized order. Two-sample tests and multiplicative
   regression models are implemented (Mao, 2024).
