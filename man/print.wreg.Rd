@@ -18,5 +18,5 @@ No return value, called for side effects.
 Print concise results for win ratio regression.
 }
 \seealso{
-\code{\link{wrtest}}.
+\code{\link{wreg}}.
 }

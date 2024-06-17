@@ -3,10 +3,11 @@
 
 # poset
 
-The **poset** package implements simple and efficient statistical
-procedures for partially ordered data, like multivariate ordinal
-response under consensus or prioritized order. The current version
-focuses on the win ratio/net benefit approach (Mao 2024).
+The **poset** package provides simple and efficient statistical routines
+for partially ordered data, such as multivariate ordinal response under
+consensus or prioritized order. The current version focuses on the win
+ratio/net benefit approach (Mao 2024) via generalized pairwise
+comparisons (Buyse 2010).
 
 ## Installation
 
@@ -25,7 +26,7 @@ devtools::install_github("lmaowisc/poset")
 
 ## Examples
 
-Here is a basic example for two-sample testing and regressio .
+Here is a basic example for two-sample testing and regression.
 
 ``` r
 library(poset)
@@ -111,6 +112,14 @@ summary(obj)
 
 <div id="refs" class="references csl-bib-body hanging-indent"
 entry-spacing="0">
+
+<div id="ref-buyse2010" class="csl-entry">
+
+Buyse, Marc. 2010. “Generalized Pairwise Comparisons of Prioritized
+Outcomes in the Two-Sample Problem.” *Statistics in Medicine* 29 (30):
+3245–57. <https://doi.org/10.1002/sim.3923>.
+
+</div>
 
 <div id="ref-mao2024" class="csl-entry">
 

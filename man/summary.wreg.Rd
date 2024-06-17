@@ -12,12 +12,11 @@
 \item{...}{Additional arguments affecting the summary produced.}
 }
 \value{
-An object of class \code{summary.wreg} with components
+An object of class \code{summary.wreg} with components:
 
 \item{coefficients}{A matrix of coefficients, standard errors, z-values and p-values.}
 \item{exp_coef}{A matrix of win ratios (exp(coef)) and 95\% confidence intervals.}
-\item{wald, wald_pval}{Wald test statistic on all covariates and p-value.}
-\item{...}{}
+\item{wald, wald_pval}{Overall wald test statistic on all covariates and p-value.}
 }
 \description{
 Summarize the inferential results for win ratio regression.

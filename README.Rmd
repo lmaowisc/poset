@@ -16,8 +16,10 @@ knitr::opts_chunk$set(
 
 # poset
 
-The **poset** package implements simple and efficient statistical procedures for partially ordered data, like multivariate ordinal response under consensus or prioritized order.
-The current version focuses on the win ratio/net benefit approach [@mao2024].
+The **poset** package provides simple and efficient statistical routines for partially ordered data, 
+such as multivariate ordinal response under consensus or prioritized order.
+The current version focuses on the win ratio/net benefit approach [@mao2024] via generalized 
+pairwise comparisons [@buyse2010].
 
 ## Installation
 
@@ -36,7 +38,7 @@ devtools::install_github("lmaowisc/poset")
 
 ## Examples
 
-Here is a basic example for two-sample testing and regressio .
+Here is a basic example for two-sample testing and regression.
 
 ```{r example}
 library(poset)

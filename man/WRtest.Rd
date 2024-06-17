@@ -13,14 +13,14 @@ wrtest(Y1, Y0, fun = wprod)
 
 \item{fun}{User-specified win function for pairwise comparison.
 It takes two arguments \eqn{y_1}
-and \eqn{y_0} (both \eqn{p}-dimensional) and returns 1 if \eqn{y_1} wins,
+and \eqn{y_0} (both \eqn{K}-vectors) and returns 1 if \eqn{y_1} wins,
 -1 if \eqn{y_0} wins, and 0 if tied. The default is \code{\link{wprod}}
-based on the product order of multivariate ordinal data.}
+for the product order of multivariate ordinal data.}
 }
 \value{
 An object of class \code{wrtest} with the following components:
-\item{theta}{A bivariate vector of win/loss fractions by LWR.}
-\item{lgwr, lgwr_se, lgwr_pval}{Log-win ratio estimate, standard error, and p-value.}
+\item{theta}{A bivariate vector of win/loss fractions.}
+\item{lgwr, lgwr_se, lgwr_pval}{Log-win ratio estimate (\code{log(theta[1]/theta[2])}), standard error, and p-value.}
 \item{nb, nb_se, nb_pval}{Net benefit estimate (\code{theta[1]-theta[2]}), standard error, and p-value.}
 }
 \description{
@@ -44,6 +44,6 @@ Mao, L. (2024). Win ratio for partially ordered data.
  \emph{Statistics in Medicine}, 29, 3245-3257.
 }
 \seealso{
-\code{\link{print.wrtest}}.
+\code{\link{wprod}}, \code{\link{print.wrtest}}.
 }
 \keyword{wrtest}

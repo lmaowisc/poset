@@ -4,28 +4,29 @@
 \alias{wprod}
 \title{The product-order win function for multivariate ordinal data}
 \usage{
-wprod(y1, y2)
+wprod(y1, y0)
 }
 \arguments{
 \item{y1}{A \eqn{K}-dimensional vector \eqn{y_1}.}
 
-\item{y2}{A \eqn{K}-dimensional vector  \eqn{y_2}.}
+\item{y0}{A \eqn{K}-dimensional vector  \eqn{y_0}.}
 }
 \value{
 An integer in \eqn{{1, 0, -1}}:
-        \item{1}{If \eqn{y_1 \ge y_2} component-wise, with strict inequality for at least
+        \item{1}{If \eqn{y_1 \ge y_0} component-wise, with strict inequality for at least
                  one component.}
-        \item{-1}{If \eqn{y_0 \ge y_2} component-wise, with strict inequality for at least
+        \item{-1}{If \eqn{y_0 \ge y_1} component-wise, with strict inequality for at least
                  one component.}
         \item{0}{Otherwise.}
 }
 \description{
-A commonly used rule to compare
-   multivariate ordinal data in \code{\link{wrtest}}. A winner has all its components
+A common rule of comparison for the \code{fun} argument
+   in \code{\link{wrtest}} and \code{\link{wreg}}.
+   A winner has all its components
    greater than or equal to those of the loser, and strictly
    so for at least one component.
 }
 \seealso{
-\code{\link{wrtest}}, \code{\link{print.wrtest}}.
+\code{\link{wrtest}}, \code{\link{wreg}}.
 }
 \keyword{wrtest}

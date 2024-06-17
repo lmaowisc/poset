@@ -8,21 +8,22 @@ wreg(Y, Z, fun = NULL, sfun = NULL, ep = 1e-06)
 }
 \arguments{
 \item{Y}{An \eqn{n\times K} matrix for \eqn{K}-variate response data on \eqn{n} subjects.
- The entries must be numeric scores.
- For pseudo-efficient estimation with specifying score function \code{sfun},
+ The entries must be numeric.
+ For pseudo-efficient estimation (without specifying \code{sfun}),
  the average score across components (row means)
-should be compatible with the partial order (i.e., a monotone function on ordered elements).}
+should be compatible with the partial order (i.e., preserve the same order for any two
+comparable and ordered elements).}
 
 \item{Z}{An \eqn{n\times p} design matrix for covariates.}
 
 \item{fun}{User-specified win function for pairwise comparison.
 It takes two arguments \eqn{y_1}
-and \eqn{y_0} (both \eqn{p}-dimensional) and returns 1 if \eqn{y_1} wins,
+and \eqn{y_0} (both \eqn{K}-vectors) and returns 1 if \eqn{y_1} wins,
 -1 if \eqn{y_0} wins, and 0 if tied. The default is \code{\link{wprod}}
-based on the product order of multivariate ordinal data.}
+for the product order of multivariate ordinal data.}
 
-\item{sfun}{The score function used in pseudo-efficient estimation.
-The default is the mean of component-wise numeric scores in \code{Y}.}
+\item{sfun}{The scoring function used in pseudo-efficient estimation.
+The default is to take the row means of \code{Y}.}
 
 \item{ep}{Convergence criterion in Newton-Raphson algorithm. The default is 1e-6.}
 }
@@ -39,7 +40,7 @@ out of the \eqn{n(n-1)/2} possible ones.}
 }
 \description{
 Fit a multiplicative win-ratio regression model to
-partially ordered outcome against covariates.
+partially ordered response against covariates.
 }
 \examples{
 head(liver)
@@ -56,6 +57,6 @@ Mao, L. (2024). Win ratio for partially ordered data.
 \emph{Statistica Sinica}, Under revision.
 }
 \seealso{
-\code{\link{wprod}}
+\code{\link{wprod}}, \code{\link{print.wreg}}, \code{\link{summary.wreg}}.
 }
 \keyword{wreg}

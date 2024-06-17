@@ -11,12 +11,12 @@
 #' @param Y0 \eqn{K}-variate response data on \eqn{n_0} subjects in control (\eqn{n_0\times K} matrix).
 #' @param fun User-specified win function for pairwise comparison.
 #'      It takes two arguments \eqn{y_1}
-#'      and \eqn{y_0} (both \eqn{p}-dimensional) and returns 1 if \eqn{y_1} wins,
+#'      and \eqn{y_0} (both \eqn{K}-vectors) and returns 1 if \eqn{y_1} wins,
 #'      -1 if \eqn{y_0} wins, and 0 if tied. The default is \code{\link{wprod}}
-#'      based on the product order of multivariate ordinal data.
+#'      for the product order of multivariate ordinal data.
 #' @return An object of class \code{wrtest} with the following components:
-#' \item{theta}{A bivariate vector of win/loss fractions by LWR.}
-#' \item{lgwr, lgwr_se, lgwr_pval}{Log-win ratio estimate, standard error, and p-value.}
+#' \item{theta}{A bivariate vector of win/loss fractions.}
+#' \item{lgwr, lgwr_se, lgwr_pval}{Log-win ratio estimate (\code{log(theta[1]/theta[2])}), standard error, and p-value.}
 #' \item{nb, nb_se, nb_pval}{Net benefit estimate (\code{theta[1]-theta[2]}), standard error, and p-value.}
 #' @importFrom stats pnorm
 #' @references
@@ -31,7 +31,7 @@
 #' @importFrom stats complete.cases
 #' @export
 #' @aliases wrtest
-#' @seealso \code{\link{print.wrtest}}.
+#' @seealso \code{\link{wprod}}, \code{\link{print.wrtest}}.
 #' @examples
 #' head(liver)
 #' ## compare bivariate ratings by fibrosis stage
@@ -159,26 +159,27 @@ print.wrtest=function(x,...){
 
 #' The product-order win function for multivariate ordinal data
 #'
-#' @description A commonly used rule to compare
-#'    multivariate ordinal data in \code{\link{wrtest}}. A winner has all its components
+#' @description A common rule of comparison for the \code{fun} argument
+#'    in \code{\link{wrtest}} and \code{\link{wreg}}.
+#'    A winner has all its components
 #'    greater than or equal to those of the loser, and strictly
 #'    so for at least one component.
 #'
 #'
 #' @param y1 A \eqn{K}-dimensional vector \eqn{y_1}.
-#' @param y2 A \eqn{K}-dimensional vector  \eqn{y_2}.
+#' @param y0 A \eqn{K}-dimensional vector  \eqn{y_0}.
 #' @return An integer in \eqn{{1, 0, -1}}:
-#'         \item{1}{If \eqn{y_1 \ge y_2} component-wise, with strict inequality for at least
+#'         \item{1}{If \eqn{y_1 \ge y_0} component-wise, with strict inequality for at least
 #'                  one component.}
-#'         \item{-1}{If \eqn{y_0 \ge y_2} component-wise, with strict inequality for at least
+#'         \item{-1}{If \eqn{y_0 \ge y_1} component-wise, with strict inequality for at least
 #'                  one component.}
 #'         \item{0}{Otherwise.}
 #'
 #' @keywords wrtest
 #' @export
-#' @seealso \code{\link{wrtest}}, \code{\link{print.wrtest}}.
-wprod <- function(y1, y2) {
-  return(all(y1 >= y2) * any(y1 > y2) - all(y1 <= y2) * any(y1 < y2))
+#' @seealso \code{\link{wrtest}}, \code{\link{wreg}}.
+wprod <- function(y1, y0) {
+  return(all(y1 >= y0) * any(y1 > y0) - all(y1 <= y0) * any(y1 < y0))
 }
 
 
@@ -189,20 +190,21 @@ wprod <- function(y1, y2) {
 #' Win ratio regression analysis
 #'
 #' @description Fit a multiplicative win-ratio regression model to
-#' partially ordered outcome against covariates.
+#' partially ordered response against covariates.
 #' @param Y An \eqn{n\times K} matrix for \eqn{K}-variate response data on \eqn{n} subjects.
-#'  The entries must be numeric scores.
-#'  For pseudo-efficient estimation with specifying score function \code{sfun},
+#'  The entries must be numeric.
+#'  For pseudo-efficient estimation (without specifying \code{sfun}),
 #'  the average score across components (row means)
-#' should be compatible with the partial order (i.e., a monotone function on ordered elements).
+#' should be compatible with the partial order (i.e., preserve the same order for any two
+#' comparable and ordered elements).
 #' @param Z An \eqn{n\times p} design matrix for covariates.
 #' @param fun User-specified win function for pairwise comparison.
 #'      It takes two arguments \eqn{y_1}
-#'      and \eqn{y_0} (both \eqn{p}-dimensional) and returns 1 if \eqn{y_1} wins,
+#'      and \eqn{y_0} (both \eqn{K}-vectors) and returns 1 if \eqn{y_1} wins,
 #'      -1 if \eqn{y_0} wins, and 0 if tied. The default is \code{\link{wprod}}
-#'      based on the product order of multivariate ordinal data.
-#' @param sfun The score function used in pseudo-efficient estimation.
-#'    The default is the mean of component-wise numeric scores in \code{Y}.
+#'      for the product order of multivariate ordinal data.
+#' @param sfun The scoring function used in pseudo-efficient estimation.
+#'    The default is to take the row means of \code{Y}.
 #' @param ep Convergence criterion in Newton-Raphson algorithm. The default is 1e-6.
 #' @return An object of class \code{wreg} with the following components:
 #' \item{beta}{A vector of estimated regression coefficients.}
@@ -214,7 +216,7 @@ wprod <- function(y1, y2) {
 #' \item{Nwl}{Number of comparable pairs (those with a win and loss)
 #' out of the \eqn{n(n-1)/2} possible ones.}
 
-#' @seealso \code{\link{wprod}}
+#' @seealso \code{\link{wprod}}, \code{\link{print.wreg}}, \code{\link{summary.wreg}}.
 #' @export
 #' @importFrom utils combn
 #' @importFrom stats complete.cases
@@ -383,7 +385,7 @@ wreg <- function(Y, Z, fun = NULL, sfun = NULL, ep = 1e-6) {
 #' @param ... Further arguments passed to or from other methods
 #' @return No return value, called for side effects.
 #' @export
-#' @seealso \code{\link{wrtest}}.
+#' @seealso \code{\link{wreg}}.
 print.wreg=function(x,...){
   cat("Call:\n")
   print(x$call)
@@ -410,12 +412,11 @@ print.wreg=function(x,...){
 #' @param object An object returned by \code{\link{wreg}}.
 #' @param ...  Additional arguments affecting the summary produced.
 #'
-#' @return An object of class \code{summary.wreg} with components
+#' @return An object of class \code{summary.wreg} with components:
 #'
 #' \item{coefficients}{A matrix of coefficients, standard errors, z-values and p-values.}
 #' \item{exp_coef}{A matrix of win ratios (exp(coef)) and 95\% confidence intervals.}
-#' \item{wald, wald_pval}{Wald test statistic on all covariates and p-value.}
-#' \item{...}{}
+#' \item{wald, wald_pval}{Overall wald test statistic on all covariates and p-value.}
 #' @seealso \code{\link{wreg}}.
 #' @keywords wreg
 #' @importFrom stats qnorm pnorm pchisq
@@ -464,8 +465,6 @@ summary.wreg=function(object, ...){
                  wald_pval = wald_pval, p = p,
                  beta = beta, var = var, n = x$n, N = x$N, Nwl = x$Nwl,
                  Y = x$Y, Z = x$Z, l = x$l, call = x$call)
-
-
   class(result)<-"summary.wreg"
   return(result)
 
@@ -476,7 +475,7 @@ summary.wreg=function(object, ...){
 
 #' Print method for summary.wreg objects
 #'
-#' Produces a printed summary of regression results for win ratio regression
+#' Print summary results for win ratio regression
 #'
 #' @param x An object returned by \code{\link{summary.wreg}}.
 #' @param ... Further arguments passed to or from other methods
