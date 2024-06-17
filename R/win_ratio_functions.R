@@ -475,7 +475,7 @@ summary.wreg=function(object, ...){
 
 #' Print method for summary.wreg objects
 #'
-#' Print summary results for win ratio regression
+#' Print summary results for win ratio regression.
 #'
 #' @param x An object returned by \code{\link{summary.wreg}}.
 #' @param ... Further arguments passed to or from other methods

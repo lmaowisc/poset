@@ -13,7 +13,7 @@
 #'
 #' @format A data frame with 186 rows (one per patient) and 7 variables:
 #' \describe{
-#'   \item{R1NASH, R2NASH}{Unique patient ID.}
+#'   \item{R1NASH, R2NASH}{Rating scores (1-5) by two readers.}
 #'   \item{Sex}{\code{M}: male; \code{F}: female.}
 #'   \item{AF}{Advanced fibrosis (\code{TRUE} or \code{FALSE}).}
 #'   \item{Steatosis}{Percent of steatosis.}

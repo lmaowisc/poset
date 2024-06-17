@@ -15,5 +15,5 @@
 No return value, called for side effects.
 }
 \description{
-Print summary results for win ratio regression
+Print summary results for win ratio regression.
 }
