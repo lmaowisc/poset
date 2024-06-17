@@ -23,7 +23,7 @@
 #' Mao, L. (2024). Win ratio for partially ordered data.
 #' \emph{Statistica Sinica}, Under revision.
 #'
-#'  Buyse, M. (2010).  \href{https://doi.org/10.1002/sim.3923}{Generalized pairwise
+#'  Buyse, M. (2010).  \href{\doi{10.1002/sim.3923}}{Generalized pairwise
 #'  comparisons of prioritized outcomes in the two-sample problem.}
 #'  \emph{Statistics in Medicine}, 29, 3245-3257.
 #' @keywords wrtest
