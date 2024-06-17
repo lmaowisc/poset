@@ -64,9 +64,9 @@
 <dt>fun</dt>
 <dd><p>User-specified win function for pairwise comparison.
 It takes two arguments \(y_1\)
-and \(y_0\) (both \(p\)-dimensional) and returns 1 if \(y_1\) wins,
+and \(y_0\) (both \(K\)-vectors) and returns 1 if \(y_1\) wins,
 -1 if \(y_0\) wins, and 0 if tied. The default is <code><a href="wprod.html">wprod</a></code>
-based on the product order of multivariate ordinal data.</p></dd>
+for the product order of multivariate ordinal data.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -75,10 +75,10 @@ based on the product order of multivariate ordinal data.</p></dd>
 
 <p>An object of class <code>wrtest</code> with the following components:</p>
 <dl><dt>theta</dt>
-<dd><p>A bivariate vector of win/loss fractions by LWR.</p></dd>
+<dd><p>A bivariate vector of win/loss fractions.</p></dd>
 
 <dt>lgwr, lgwr_se, lgwr_pval</dt>
-<dd><p>Log-win ratio estimate, standard error, and p-value.</p></dd>
+<dd><p>Log-win ratio estimate (<code>log(theta[1]/theta[2])</code>), standard error, and p-value.</p></dd>
 
 <dt>nb, nb_se, nb_pval</dt>
 <dd><p>Net benefit estimate (<code>theta[1]-theta[2]</code>), standard error, and p-value.</p></dd>
@@ -94,7 +94,7 @@ based on the product order of multivariate ordinal data.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="print.wrtest.html">print.wrtest</a></code>.</p></div>
+    <div class="dont-index"><p><code><a href="wprod.html">wprod</a></code>, <code><a href="print.wrtest.html">print.wrtest</a></code>.</p></div>
     </div>
 
     <div class="section level2">
